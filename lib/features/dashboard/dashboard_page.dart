@@ -26,26 +26,40 @@ class DashboardPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final navigationBarTheme = NavigationBarTheme.of(context);
+    final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
+    final dividerTheme = theme.dividerTheme;
 
     return Scaffold(
       appBar: AppTopBar(
         title: _destinations[navigationShell.currentIndex].label,
       ),
       body: SafeArea(child: navigationShell),
-      bottomNavigationBar: NavigationBar(
-        selectedIndex: navigationShell.currentIndex,
-        onDestinationSelected: _onDestinationSelected,
-        destinations: [
-          for (final destination in _destinations)
-            NavigationDestination(
-              label: destination.label,
-              icon: destination.buildIcon(navigationBarTheme, selected: false),
-              selectedIcon: destination.buildIcon(
-                navigationBarTheme,
-                selected: true,
-              ),
+      bottomNavigationBar: DecoratedBox(
+        position: DecorationPosition.foreground,
+        decoration: BoxDecoration(
+          border: Border(
+            top: BorderSide(
+              color: dividerTheme.color ?? colorScheme.outlineVariant,
+              width: dividerTheme.thickness ?? AppSize.dividerThickness,
             ),
-        ],
+          ),
+        ),
+        child: NavigationBar(
+          selectedIndex: navigationShell.currentIndex,
+          onDestinationSelected: _onDestinationSelected,
+          destinations: [
+            for (final destination in _destinations)
+              NavigationDestination(
+                label: destination.label,
+                icon: destination.buildIcon(navigationBarTheme, selected: false),
+                selectedIcon: destination.buildIcon(
+                  navigationBarTheme,
+                  selected: true,
+                ),
+              ),
+          ],
+        ),
       ),
     );
   }

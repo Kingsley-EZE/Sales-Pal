@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import 'colors.dart';
 import 'radius.dart';
+import 'semantic_colors.dart';
 import 'sizes.dart';
 import 'spacing.dart';
 import 'typography.dart';
@@ -14,6 +15,11 @@ abstract final class AppTheme {
     return ThemeData(
       colorScheme: colorScheme,
       textTheme: AppTypography.textTheme(colorScheme),
+      extensions: [
+        colorScheme.brightness == Brightness.dark
+            ? AppSemanticColors.dark
+            : AppSemanticColors.light,
+      ],
       appBarTheme: AppBarTheme(
         backgroundColor: colorScheme.surface,
         foregroundColor: colorScheme.onSurface,
@@ -55,7 +61,7 @@ abstract final class AppTheme {
         ),
       ),
       dividerTheme: DividerThemeData(
-        color: AppColors.divider,
+        color: colorScheme.outlineVariant,
         thickness: AppSize.dividerThickness,
         space: AppSize.dividerThickness,
       ),

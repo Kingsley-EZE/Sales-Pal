@@ -12,7 +12,12 @@ void main() {
       await tester.pumpWidget(const MyApp());
       await tester.pumpAndSettle();
 
-      final icons = tester.widgetList<SvgPicture>(find.byType(SvgPicture));
+      final icons = tester.widgetList<SvgPicture>(
+        find.descendant(
+          of: find.byType(NavigationBar),
+          matching: find.byType(SvgPicture),
+        ),
+      );
       expect(icons, isNotEmpty);
       for (final icon in icons) {
         expect(icon.width, AppIconSize.lg);
