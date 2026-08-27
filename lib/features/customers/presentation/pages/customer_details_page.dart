@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:sales_pal/core/navigation/app_routes.dart';
 import 'package:sales_pal/design/components/app_button.dart';
 import 'package:sales_pal/design/components/app_top_bar.dart';
 import 'package:sales_pal/design/spacing.dart';
@@ -46,7 +47,10 @@ class CustomerDetailsPage extends StatelessWidget {
         AppButton(
             label: "Create Order",
             icon: Assets.icons.icPlus.path,
-            onPressed: () {}),
+            onPressed: () => NewOrderRoute(
+              customerId: customer.id,
+              $extra: customer,
+            ).push(context)),
       ],
     );
   }

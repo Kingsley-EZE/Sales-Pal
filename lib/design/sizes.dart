@@ -11,6 +11,8 @@ abstract final class AppSize {
 
   static const compactButtonMinWidth = 66.0;
 
+  static const stepperButton = 36.0;
+
   static const dividerThickness = 1.0;
   static const productThumbnail = 64.0;
 }
