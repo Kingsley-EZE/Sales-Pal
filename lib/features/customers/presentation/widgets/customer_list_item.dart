@@ -55,7 +55,7 @@ class CustomerListItem extends StatelessWidget {
                             customer.location,
                             maxLines: 1,
                             overflow: TextOverflow.ellipsis,
-                            style: textTheme.bodyLarge?.copyWith(
+                            style: textTheme.bodyMedium?.copyWith(
                               color: colorScheme.onSurfaceVariant,
                             ),
                           ),
@@ -72,8 +72,8 @@ class CustomerListItem extends StatelessWidget {
                   spacing: AppSpacing.sm,
                   children: [
                     Assets.icons.icPhone.svg(
-                      width: AppIconSize.md,
-                      height: AppIconSize.md,
+                      width: AppIconSize.sm,
+                      height: AppIconSize.sm,
                       colorFilter: ColorFilter.mode(
                         colorScheme.onSurface,
                         BlendMode.srcIn,
@@ -84,7 +84,7 @@ class CustomerListItem extends StatelessWidget {
                         customer.phoneNumber,
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
-                        style: textTheme.bodyLarge,
+                        style: textTheme.bodyMedium,
                       ),
                     ),
                   ],
