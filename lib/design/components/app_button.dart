@@ -4,10 +4,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 import '../sizes.dart';
 import '../spacing.dart';
 
-enum AppButtonType {
-  primary,
-  secondary,
-}
+enum AppButtonType { primary, secondary }
 
 class AppButton extends StatelessWidget {
   const AppButton({
@@ -48,16 +45,21 @@ class AppButton extends StatelessWidget {
       ),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.center,
+        spacing: AppSpacing.sm,
         children: [
-          if (icon != null) ...[
-            SvgPicture.asset(
-              icon!,
-              width: AppIconSize.md,
-              height: AppIconSize.md,
-              colorFilter: ColorFilter.mode(foregroundColor, BlendMode.srcIn),
+          if (icon != null)
+            Transform.translate(
+              offset: const Offset(0, 1),
+              child: SvgPicture.asset(
+                icon!,
+                width: AppIconSize.md,
+                height: AppIconSize.md,
+                colorFilter: ColorFilter.mode(
+                  foregroundColor,
+                  BlendMode.srcIn,
+                ),
+              ),
             ),
-            const SizedBox(width: AppSpacing.sm),
-          ],
           Text(label),
         ],
       ),

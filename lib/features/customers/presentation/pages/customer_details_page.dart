@@ -8,6 +8,8 @@ import 'package:sales_pal/features/customers/presentation/widgets/contact_inform
 import 'package:sales_pal/features/customers/presentation/widgets/outstanding_balance_card.dart';
 import 'package:sales_pal/features/customers/presentation/widgets/recent_orders_card.dart';
 
+import '../../../../gen/assets.gen.dart';
+
 class CustomerDetailsPage extends StatelessWidget {
   const CustomerDetailsPage({
     super.key,
@@ -41,7 +43,10 @@ class CustomerDetailsPage extends StatelessWidget {
         ),
       ),
       persistentFooterButtons: [
-        AppButton(label: "Create Order", onPressed: () {}),
+        AppButton(
+            label: "Create Order",
+            icon: Assets.icons.icPlus.path,
+            onPressed: () {}),
       ],
     );
   }
