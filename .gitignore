@@ -24,7 +24,9 @@ migrate_working_dir/
 #.vscode/
 
 # Flutter/Dart/Pub related
+# Generated code — run `dart run build_runner build` after cloning
 lib/gen/
+*.g.dart
 **/doc/api/
 **/ios/Flutter/.last_build_id
 .dart_tool/
