@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../design/components/app_top_bar.dart';
+import '../../design/sizes.dart';
 import '../../gen/assets.gen.dart';
 
 class DashboardPage extends StatelessWidget {
@@ -23,11 +25,11 @@ class DashboardPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final colorScheme = Theme.of(context).colorScheme;
+    final navigationBarTheme = NavigationBarTheme.of(context);
 
     return Scaffold(
-      appBar: AppBar(
-        title: Text(_destinations[navigationShell.currentIndex].label),
+      appBar: AppTopBar(
+        title: _destinations[navigationShell.currentIndex].label,
       ),
       body: SafeArea(child: navigationShell),
       bottomNavigationBar: NavigationBar(
@@ -37,8 +39,11 @@ class DashboardPage extends StatelessWidget {
           for (final destination in _destinations)
             NavigationDestination(
               label: destination.label,
-              icon: destination.buildIcon(colorScheme.onSurfaceVariant),
-              selectedIcon: destination.buildIcon(colorScheme.onSecondaryContainer),
+              icon: destination.buildIcon(navigationBarTheme, selected: false),
+              selectedIcon: destination.buildIcon(
+                navigationBarTheme,
+                selected: true,
+              ),
             ),
         ],
       ),
@@ -52,9 +57,19 @@ class _DashboardDestination {
   final String label;
   final SvgGenImage icon;
 
-  Widget buildIcon(Color color) => icon.svg(
-    width: 24,
-    height: 24,
-    colorFilter: ColorFilter.mode(color, BlendMode.srcIn),
-  );
+  Widget buildIcon(NavigationBarThemeData theme, {required bool selected}) {
+    final iconTheme = theme.iconTheme?.resolve(
+      selected ? {WidgetState.selected} : <WidgetState>{},
+    );
+    final size = iconTheme?.size ?? AppIconSize.lg;
+    final color = iconTheme?.color;
+
+    return icon.svg(
+      width: size,
+      height: size,
+      colorFilter: color == null
+          ? null
+          : ColorFilter.mode(color, BlendMode.srcIn),
+    );
+  }
 }

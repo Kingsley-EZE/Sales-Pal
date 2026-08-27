@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
+import '../sizes.dart';
 import '../spacing.dart';
 
 enum AppButtonType {
@@ -22,18 +23,17 @@ class AppButton extends StatelessWidget {
   final AppButtonType type;
   final String? icon;
 
-  static const _borderRadius = 12.0;
-
   @override
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
     final isPrimary = type == AppButtonType.primary;
 
-    final backgroundColor = isPrimary ? colorScheme.primary : colorScheme.surface;
-    final foregroundColor = isPrimary ? colorScheme.onPrimary : colorScheme.onSurface;
-    final borderSide = isPrimary
-        ? BorderSide.none
-        : BorderSide(color: colorScheme.outlineVariant);
+    final backgroundColor = isPrimary
+        ? colorScheme.primary
+        : colorScheme.surface;
+    final foregroundColor = isPrimary
+        ? colorScheme.onPrimary
+        : colorScheme.onSurface;
 
     return OutlinedButton(
       onPressed: onPressed,
@@ -42,12 +42,9 @@ class AppButton extends StatelessWidget {
         foregroundColor: foregroundColor,
         disabledBackgroundColor: backgroundColor.withValues(alpha: 0.4),
         disabledForegroundColor: foregroundColor.withValues(alpha: 0.4),
-        side: borderSide,
-        elevation: 0,
-        padding: EdgeInsets.symmetric(vertical: 12),
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(_borderRadius),
-        ),
+        side: isPrimary
+            ? BorderSide.none
+            : BorderSide(color: colorScheme.outlineVariant),
       ),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.center,
@@ -55,19 +52,13 @@ class AppButton extends StatelessWidget {
           if (icon != null) ...[
             SvgPicture.asset(
               icon!,
-              width: 20,
-              height: 20,
+              width: AppIconSize.md,
+              height: AppIconSize.md,
               colorFilter: ColorFilter.mode(foregroundColor, BlendMode.srcIn),
             ),
             const SizedBox(width: AppSpacing.sm),
           ],
-          Text(
-            label,
-            style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                  color: foregroundColor,
-                  fontWeight: FontWeight.w700,
-                ),
-          ),
+          Text(label),
         ],
       ),
     );
