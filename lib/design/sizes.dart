@@ -6,5 +6,13 @@ abstract final class AppIconSize {
 
 abstract final class AppSize {
   static const tapTarget = 48.0;
+
+  static const compactTapTarget = 40.0;
+
+  static const compactButtonMinWidth = 66.0;
+
+  static const stepperButton = 36.0;
+
   static const dividerThickness = 1.0;
+  static const productThumbnail = 64.0;
 }

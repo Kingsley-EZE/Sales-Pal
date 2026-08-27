@@ -17,6 +17,9 @@ abstract final class AppTypography {
     fontWeight: FontWeight.w800,
   );
 
+  static TextStyle get priceLabel =>
+      GoogleFonts.lato(fontSize: 20, height: 1.2, fontWeight: FontWeight.w700);
+
   /// Uppercase heading that labels a card's contents.
   static TextStyle get sectionTitle =>
       GoogleFonts.lato(fontSize: 16, height: 1.4, fontWeight: FontWeight.w700);
@@ -33,6 +36,15 @@ abstract final class AppTypography {
   static TextStyle get buttonLabel =>
       GoogleFonts.lato(fontSize: 16, height: 1.5, fontWeight: FontWeight.w700);
 
+  static TextStyle get overline => GoogleFonts.lato(
+    fontSize: 12,
+    height: 1.33,
+    fontWeight: FontWeight.w700,
+  );
+
+  static TextStyle get buttonLabelSmall =>
+      GoogleFonts.lato(fontSize: 14, height: 1.4, fontWeight: FontWeight.w700);
+
   static TextStyle get navigationLabel => GoogleFonts.lato(
     fontSize: 12,
     height: 1.33,
@@ -44,9 +56,11 @@ abstract final class AppTypography {
         .copyWith(
           headlineMedium: balanceAmount,
           headlineSmall: pageTitle,
+          titleLarge: priceLabel,
           titleMedium: cardTitle,
           titleSmall: sectionTitle,
           bodyLarge: pageSubtitle,
+          labelMedium: overline,
         )
         .apply(
           bodyColor: colorScheme.onSurface,
