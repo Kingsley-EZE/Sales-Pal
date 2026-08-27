@@ -6,6 +6,7 @@ import '../spacing.dart';
 import '../typography.dart';
 
 enum AppBadgeTone {
+  success,
   warning,
   neutral,
 }
@@ -26,6 +27,10 @@ class AppBadge extends StatelessWidget {
     final semanticColors = AppSemanticColors.of(context);
 
     final (backgroundColor, foregroundColor) = switch (tone) {
+      AppBadgeTone.success => (
+        semanticColors.successContainer,
+        semanticColors.onSuccessContainer,
+      ),
       AppBadgeTone.warning => (
         semanticColors.warningContainer,
         semanticColors.onWarningContainer,

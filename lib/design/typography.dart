@@ -11,6 +11,16 @@ abstract final class AppTypography {
   static TextStyle get pageSubtitle =>
       GoogleFonts.lato(fontSize: 16, height: 1.4, fontWeight: FontWeight.w400);
 
+  static TextStyle get balanceAmount => GoogleFonts.lato(
+    fontSize: 28,
+    height: 1.2,
+    fontWeight: FontWeight.w800,
+  );
+
+  /// Uppercase heading that labels a card's contents.
+  static TextStyle get sectionTitle =>
+      GoogleFonts.lato(fontSize: 16, height: 1.4, fontWeight: FontWeight.w700);
+
   static TextStyle get cardTitle =>
       GoogleFonts.lato(fontSize: 18, height: 1.33, fontWeight: FontWeight.w700);
 
@@ -32,8 +42,10 @@ abstract final class AppTypography {
   static TextTheme textTheme(ColorScheme colorScheme) {
     return GoogleFonts.latoTextTheme()
         .copyWith(
+          headlineMedium: balanceAmount,
           headlineSmall: pageTitle,
           titleMedium: cardTitle,
+          titleSmall: sectionTitle,
           bodyLarge: pageSubtitle,
         )
         .apply(
