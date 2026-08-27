@@ -38,6 +38,7 @@ abstract final class AppTheme {
           elevation: 0,
         ),
       ),
+      scaffoldBackgroundColor: colorScheme.surface,
       navigationBarTheme: NavigationBarThemeData(
         backgroundColor: colorScheme.surface,
         indicatorColor: colorScheme.secondaryContainer,

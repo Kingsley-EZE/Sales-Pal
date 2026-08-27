@@ -4,6 +4,8 @@ final class AppSemanticColors extends ThemeExtension<AppSemanticColors> {
   const AppSemanticColors({
     required this.success,
     required this.onSuccess,
+    required this.successContainer,
+    required this.onSuccessContainer,
     required this.warning,
     required this.onWarning,
     required this.warningContainer,
@@ -12,6 +14,10 @@ final class AppSemanticColors extends ThemeExtension<AppSemanticColors> {
 
   final Color success;
   final Color onSuccess;
+
+  final Color successContainer;
+  final Color onSuccessContainer;
+
   final Color warning;
   final Color onWarning;
 
@@ -21,6 +27,8 @@ final class AppSemanticColors extends ThemeExtension<AppSemanticColors> {
   static const light = AppSemanticColors(
     success: Color(0xFF2E7D32),
     onSuccess: Color(0xFFFFFFFF),
+    successContainer: Color(0xFFDEF7EC),
+    onSuccessContainer: Color(0xFF10B981),
     warning: Color(0xFFED6C02),
     onWarning: Color(0xFFFFFFFF),
     warningContainer: Color(0xFFFEF6E9),
@@ -30,6 +38,8 @@ final class AppSemanticColors extends ThemeExtension<AppSemanticColors> {
   static const dark = AppSemanticColors(
     success: Color(0xFF81C784),
     onSuccess: Color(0xFF07290A),
+    successContainer: Color(0xFF12352A),
+    onSuccessContainer: Color(0xFF10B981),
     warning: Color(0xFFFFB74D),
     onWarning: Color(0xFF3B2200),
     warningContainer: Color(0xFF3B2A12),
@@ -43,6 +53,8 @@ final class AppSemanticColors extends ThemeExtension<AppSemanticColors> {
   AppSemanticColors copyWith({
     Color? success,
     Color? onSuccess,
+    Color? successContainer,
+    Color? onSuccessContainer,
     Color? warning,
     Color? onWarning,
     Color? warningContainer,
@@ -51,6 +63,8 @@ final class AppSemanticColors extends ThemeExtension<AppSemanticColors> {
     return AppSemanticColors(
       success: success ?? this.success,
       onSuccess: onSuccess ?? this.onSuccess,
+      successContainer: successContainer ?? this.successContainer,
+      onSuccessContainer: onSuccessContainer ?? this.onSuccessContainer,
       warning: warning ?? this.warning,
       onWarning: onWarning ?? this.onWarning,
       warningContainer: warningContainer ?? this.warningContainer,
@@ -65,6 +79,16 @@ final class AppSemanticColors extends ThemeExtension<AppSemanticColors> {
     return AppSemanticColors(
       success: Color.lerp(success, other.success, t)!,
       onSuccess: Color.lerp(onSuccess, other.onSuccess, t)!,
+      successContainer: Color.lerp(
+        successContainer,
+        other.successContainer,
+        t,
+      )!,
+      onSuccessContainer: Color.lerp(
+        onSuccessContainer,
+        other.onSuccessContainer,
+        t,
+      )!,
       warning: Color.lerp(warning, other.warning, t)!,
       onWarning: Color.lerp(onWarning, other.onWarning, t)!,
       warningContainer: Color.lerp(
@@ -87,6 +111,8 @@ final class AppSemanticColors extends ThemeExtension<AppSemanticColors> {
     return other is AppSemanticColors &&
         other.success == success &&
         other.onSuccess == onSuccess &&
+        other.successContainer == successContainer &&
+        other.onSuccessContainer == onSuccessContainer &&
         other.warning == warning &&
         other.onWarning == onWarning &&
         other.warningContainer == warningContainer &&
@@ -97,6 +123,8 @@ final class AppSemanticColors extends ThemeExtension<AppSemanticColors> {
   int get hashCode => Object.hash(
     success,
     onSuccess,
+    successContainer,
+    onSuccessContainer,
     warning,
     onWarning,
     warningContainer,
