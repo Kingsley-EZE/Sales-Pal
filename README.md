@@ -4,7 +4,25 @@ A new Flutter project.
 
 ## Getting Started
 
-This project is a starting point for a Flutter application.
+Generated code is not checked into version control, so a fresh clone will not
+compile until you run the code generator:
+
+```sh
+flutter pub get
+dart run build_runner build
+flutter run
+```
+
+This generates `lib/gen/assets.gen.dart` (asset references) and
+`lib/core/navigation/app_routes.g.dart` (type-safe routes). The latter is a
+`part` file, so without it `flutter analyze` and `flutter test` will report
+errors rather than merely failing at runtime.
+
+Re-run `dart run build_runner build` whenever you add an asset or change a
+route. Use `dart run build_runner watch` to regenerate automatically while
+developing.
+
+## Resources
 
 A few resources to get you started if this is your first Flutter project:
 

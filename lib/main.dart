@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:sales_pal/design/components/app_button.dart';
 
+import 'core/navigation/app_router.dart';
 import 'design/theme.dart';
 
 void main() {
@@ -12,40 +12,12 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
+    return MaterialApp.router(
       title: 'Sales Pal',
       theme: AppTheme.light,
       darkTheme: AppTheme.dark,
       themeMode: ThemeMode.system,
-      home: const MyHomePage(),
+      routerConfig: AppRouter.router,
     );
   }
 }
-
-class MyHomePage extends StatelessWidget {
-  const MyHomePage({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text("HomePage"),
-      ),
-      body: SafeArea(
-          child: Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                AppButton(
-                    label: "Click Me",
-                    type: AppButtonType.secondary,
-                    onPressed: (){})
-              ],
-            ),
-          )
-      ),
-    );
-  }
-}
-
