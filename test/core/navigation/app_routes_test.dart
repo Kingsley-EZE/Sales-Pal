@@ -47,13 +47,8 @@ Future<GoRouter> _pumpAtCustomerDetails(WidgetTester tester) async {
 void main() {
   setUpAll(() => GoogleFonts.config.allowRuntimeFetching = false);
 
-  // The router resolves its cubits from the container. Reset between tests so
-  // no cubit carries state across.
   setUp(() async {
     JsonAssetLoader.latency = Duration.zero;
-    // rootBundle caches the Future, not the string. Left alone, a later test
-    // awaits a Future created inside an earlier test's async zone and never
-    // resumes, so the screen sits on its spinner forever.
     rootBundle.clear();
     await getIt.reset();
     await configureDependencies();
@@ -63,8 +58,6 @@ void main() {
     final router = await _pumpAtCustomerDetails(tester);
     expect(find.byType(CustomerDetailsPage), findsOneWidget);
 
-    // Nesting under the details route means this push rebuilds that route too,
-    // so the extra has to travel with it.
     router.push(
       const NewOrderRoute(customerId: '3', $extra: _customer).location,
       extra: _customer,

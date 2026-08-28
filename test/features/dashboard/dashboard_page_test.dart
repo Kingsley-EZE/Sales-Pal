@@ -8,13 +8,8 @@ import 'package:sales_pal/design/sizes.dart';
 import 'package:sales_pal/main.dart';
 
 void main() {
-  // MyApp builds the real router, whose routes resolve cubits from the
-  // container.
   setUp(() async {
     JsonAssetLoader.latency = Duration.zero;
-    // rootBundle caches the Future, not the string. Left alone, a later test
-    // awaits a Future created inside an earlier test's async zone and never
-    // resumes, so the screen sits on its spinner forever.
     rootBundle.clear();
     await getIt.reset();
     await configureDependencies();
