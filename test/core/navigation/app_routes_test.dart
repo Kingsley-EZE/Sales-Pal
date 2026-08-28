@@ -21,6 +21,7 @@ import 'package:sales_pal/features/orders/presentation/pages/orders_page.dart';
 import 'package:sales_pal/features/products/domain/entities/product.dart';
 
 import '../../support/dependencies.dart';
+import '../../support/pumping.dart';
 
 const _customer = Customer(
   id: '3',
@@ -159,15 +160,6 @@ void main() {
     await tester.tap(find.text('Create Order'));
     await tester.pumpAndSettle();
     await tester.tap(find.text('Review Order'));
-    await tester.pumpAndSettle();
-  }
-
-  Future<void> tapThroughDatabase(WidgetTester tester, String label) async {
-    await tester.runAsync(() async {
-      await tester.tap(find.text(label));
-      await tester.pump();
-      await Future<void>.delayed(const Duration(milliseconds: 100));
-    });
     await tester.pumpAndSettle();
   }
 

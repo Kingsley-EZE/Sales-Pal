@@ -5,9 +5,14 @@ import 'package:sales_pal/features/orders/domain/entities/order.dart';
 import 'package:sales_pal/features/customers/presentation/widgets/order_list_item.dart';
 
 class RecentOrdersCard extends StatelessWidget {
-  const RecentOrdersCard({super.key, required this.orders});
+  const RecentOrdersCard({
+    super.key,
+    required this.orders,
+    this.emptyMessage = 'No orders yet',
+  });
 
   final List<Order> orders;
+  final String emptyMessage;
 
   @override
   Widget build(BuildContext context) {
@@ -17,7 +22,7 @@ class RecentOrdersCard extends StatelessWidget {
       title: 'Recent orders',
       child: orders.isEmpty
           ? Text(
-              'No orders yet',
+              emptyMessage,
               style: theme.textTheme.bodyLarge?.copyWith(
                 color: theme.colorScheme.onSurfaceVariant,
               ),

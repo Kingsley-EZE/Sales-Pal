@@ -6,7 +6,8 @@ import '../../features/customers/domain/entities/customer.dart';
 import '../../features/customers/presentation/cubit/customers_cubit.dart';
 import '../../features/products/presentation/cubit/products_cubit.dart';
 import '../di/injection.dart';
-import '../../features/customers/data/sample_orders.dart';
+import '../../features/customers/presentation/cubit/customer_orders_cubit.dart';
+import '../../features/orders/presentation/cubit/order_queue_cubit.dart';
 import '../../features/customers/presentation/pages/customer_details_page.dart';
 import '../../features/customers/presentation/pages/customers_page.dart';
 import '../../features/customers/presentation/pages/select_customer_page.dart';
@@ -90,8 +91,10 @@ final class CustomerDetailsRoute extends GoRouteData
   static final GlobalKey<NavigatorState> $parentNavigatorKey = rootNavigatorKey;
 
   @override
-  Widget build(BuildContext context, GoRouterState state) =>
-      CustomerDetailsPage(customer: $extra, recentOrders: sampleOrders);
+  Widget build(BuildContext context, GoRouterState state) => BlocProvider(
+    create: (_) => getIt<CustomerOrdersCubit>()..load(customerId),
+    child: CustomerDetailsPage(customer: $extra),
+  );
 }
 
 
@@ -151,5 +154,8 @@ final class OrdersRoute extends GoRouteData with $OrdersRoute {
   const OrdersRoute();
 
   @override
-  Widget build(BuildContext context, GoRouterState state) => const OrdersPage();
+  Widget build(BuildContext context, GoRouterState state) => BlocProvider(
+    create: (_) => getIt<OrderQueueCubit>()..load(),
+    child: const OrdersPage(),
+  );
 }

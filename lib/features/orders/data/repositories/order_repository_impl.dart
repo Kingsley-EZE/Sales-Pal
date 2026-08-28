@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:dartz/dartz.dart' hide Order;
 import 'package:injectable/injectable.dart' hide Order;
 
@@ -9,10 +11,16 @@ import '../datasources/order_local_data_source.dart';
 
 @LazySingleton(as: OrderRepository)
 class OrderRepositoryImpl implements OrderRepository {
-  const OrderRepositoryImpl(this._api, this._local);
+  OrderRepositoryImpl(this._api, this._local);
 
   final OrderApiService _api;
   final OrderLocalDataSource _local;
+
+
+  final _changes = StreamController<void>.broadcast();
+
+  @override
+  Stream<void> get changes => _changes.stream;
 
   @override
   Future<Either<Failure, Order>> submit(Order order) async {
@@ -28,6 +36,7 @@ class OrderRepositoryImpl implements OrderRepository {
 
     try {
       await _local.save(submitted);
+      _changes.add(null);
     } catch (_) {
 
     }
@@ -41,6 +50,8 @@ class OrderRepositoryImpl implements OrderRepository {
 
     try {
       await _local.save(pending);
+      _changes.add(null);
+
       return Right(pending);
     } catch (_) {
       return const Left(DataFailure('Could not save this order.'));
