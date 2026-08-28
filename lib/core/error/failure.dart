@@ -12,3 +12,12 @@ sealed class Failure extends Equatable {
 final class DataFailure extends Failure {
   const DataFailure([super.message = 'Something went wrong. Please try again.']);
 }
+
+
+final class OfflineFailure extends Failure {
+  const OfflineFailure([
+    super.message =
+        'It seems you are currently offline or experiencing weak internet '
+            'connectivity.',
+  ]);
+}

@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 import '../../design/components/app_top_bar.dart';
 import '../../design/sizes.dart';
 import '../../gen/assets.gen.dart';
+import 'widgets/connectivity_toggle.dart';
 
 class DashboardPage extends StatelessWidget {
   const DashboardPage({super.key, required this.navigationShell});
@@ -41,6 +42,7 @@ class DashboardPage extends StatelessWidget {
       appBar: AppTopBar(
         title: _destinations[navigationShell.currentIndex].label,
         subtitle: _destinations[navigationShell.currentIndex].subtitle,
+        trailing: const ConnectivityToggle(),
       ),
       body: SafeArea(child: navigationShell),
       bottomNavigationBar: DecoratedBox(
