@@ -21,14 +21,17 @@ class CustomerListView extends StatelessWidget {
           message: message,
           onRetry: context.read<CustomersCubit>().load,
         ),
-        CustomersLoaded(:final customers) when customers.isEmpty =>
+        CustomersLoaded(hasNoMatches: true, :final query) => AppStatusView(
+          message: 'No customers match "${query.trim()}".',
+        ),
+        CustomersLoaded(:final visible) when visible.isEmpty =>
           const AppStatusView(message: 'No customers yet.'),
-        CustomersLoaded(:final customers) => ListView.separated(
-          itemCount: customers.length,
+        CustomersLoaded(:final visible) => ListView.separated(
+          itemCount: visible.length,
           padding: const EdgeInsets.all(AppSpacing.md),
           keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
           itemBuilder: (context, index) {
-            final customer = customers[index];
+            final customer = visible[index];
 
             return CustomerListItem(
               customer: customer,

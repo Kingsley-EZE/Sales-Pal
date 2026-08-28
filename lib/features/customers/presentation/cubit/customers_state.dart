@@ -12,12 +12,22 @@ final class CustomersLoading extends CustomersState {
 }
 
 final class CustomersLoaded extends CustomersState {
-  const CustomersLoaded(this.customers);
+  const CustomersLoaded({required this.all, this.query = ''});
 
-  final List<Customer> customers;
+  final List<Customer> all;
+  final String query;
+
+  List<Customer> get visible => query.trim().isEmpty
+      ? all
+      : all.where((customer) => customer.matches(query)).toList();
+
+  bool get hasNoMatches => visible.isEmpty && all.isNotEmpty;
+
+  CustomersLoaded copyWith({String? query}) =>
+      CustomersLoaded(all: all, query: query ?? this.query);
 
   @override
-  List<Object?> get props => [customers];
+  List<Object?> get props => [all, query];
 }
 
 final class CustomersFailed extends CustomersState {
