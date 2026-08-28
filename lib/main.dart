@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -11,6 +13,9 @@ import 'features/orders/presentation/cubit/submit_order_cubit.dart';
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await configureDependencies();
+
+  unawaited(getIt<ConnectivityCubit>().watch());
+
   runApp(const MyApp());
 }
 

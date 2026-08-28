@@ -9,6 +9,8 @@ import 'package:sales_pal/features/orders/domain/entities/order.dart';
 import 'package:sales_pal/features/orders/domain/entities/order_line_item.dart';
 import 'package:sqflite_common_ffi/sqflite_ffi.dart';
 
+import '../../../../support/fake_connectivity_monitor.dart';
+
 final _order = Order(
   reference: 'FF-2026-0001',
   customerId: 'CUS-001',
@@ -44,7 +46,7 @@ void main() {
       ),
     );
     local = OrderLocalDataSourceImpl(db);
-    connectivity = ConnectivityCubit();
+    connectivity = ConnectivityCubit(FakeConnectivityMonitor());
     repository = OrderRepositoryImpl(OrderApiService(connectivity), local);
   });
 
