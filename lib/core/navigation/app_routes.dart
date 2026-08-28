@@ -12,6 +12,7 @@ import '../../features/customers/presentation/pages/customers_page.dart';
 import '../../features/customers/presentation/pages/select_customer_page.dart';
 import '../../features/dashboard/dashboard_page.dart';
 import '../../features/orders/presentation/pages/new_order_page.dart';
+import '../../features/orders/presentation/pages/order_submission_status_page.dart';
 import '../../features/orders/presentation/pages/orders_page.dart';
 import '../../features/orders/presentation/pages/review_order_page.dart';
 import '../../features/products/presentation/pages/products_page.dart';
@@ -114,6 +115,18 @@ final class ReviewOrderRoute extends GoRouteData with $ReviewOrderRoute {
       const ReviewOrderPage();
 }
 
+
+@TypedGoRoute<OrderSubmissionStatusRoute>(path: '/order-status/:status')
+final class OrderSubmissionStatusRoute extends GoRouteData
+    with $OrderSubmissionStatusRoute {
+  const OrderSubmissionStatusRoute({required this.status});
+
+  final OrderSubmissionStatus status;
+
+  @override
+  Widget build(BuildContext context, GoRouterState state) =>
+      OrderSubmissionStatusPage(status: status);
+}
 
 @TypedGoRoute<SelectCustomerRoute>(path: '/select-customer')
 final class SelectCustomerRoute extends GoRouteData with $SelectCustomerRoute {

@@ -3,7 +3,12 @@ import 'package:flutter/material.dart';
 abstract final class AppColors {
   static const seed = Color(0xFF0D7377);
 
+  static const danger = Color(0xFFF5233F);
+  static const dangerContainer = Color(0xFFFFEFF0);
+
   static final light = ColorScheme.fromSeed(seedColor: seed).copyWith(
+    error: danger,
+    errorContainer: dangerContainer,
     surface: const Color(0xFFF9FAFB),
     surfaceDim: const Color(0xFFE5E7EB),
     surfaceBright: const Color(0xFFFFFFFF),
@@ -18,6 +23,8 @@ abstract final class AppColors {
   static final dark =
       ColorScheme.fromSeed(seedColor: seed, brightness: Brightness.dark)
           .copyWith(
+            error: danger,
+            errorContainer: const Color(0xFF3B1219),
             surface: const Color(0xFF111827),
             surfaceDim: const Color(0xFF030712),
             surfaceBright: const Color(0xFF374151),
