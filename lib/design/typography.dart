@@ -42,6 +42,9 @@ abstract final class AppTypography {
     fontWeight: FontWeight.w700,
   );
 
+  static TextStyle get bodyStrong =>
+      GoogleFonts.lato(fontSize: 14, height: 1.4, fontWeight: FontWeight.w700);
+
   static TextStyle get buttonLabelSmall =>
       GoogleFonts.lato(fontSize: 14, height: 1.4, fontWeight: FontWeight.w700);
 
@@ -60,6 +63,7 @@ abstract final class AppTypography {
           titleMedium: cardTitle,
           titleSmall: sectionTitle,
           bodyLarge: pageSubtitle,
+          labelLarge: bodyStrong,
           labelMedium: overline,
         )
         .apply(

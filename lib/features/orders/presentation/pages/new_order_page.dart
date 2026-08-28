@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:sales_pal/core/format/app_format.dart';
+import 'package:sales_pal/core/navigation/app_routes.dart';
+import 'package:sales_pal/features/customers/domain/customer.dart';
 import 'package:sales_pal/design/components/app_button.dart';
 import 'package:sales_pal/design/components/app_top_bar.dart';
 import 'package:sales_pal/design/spacing.dart';
@@ -10,9 +12,12 @@ import 'package:sales_pal/features/orders/presentation/widgets/order_line_item_c
 import '../../../../design/sizes.dart';
 
 class NewOrderPage extends StatelessWidget {
-  const NewOrderPage({super.key, this.customerName = 'Acme Groceries Ltd.'});
+  const NewOrderPage({super.key, required this.customer});
 
-  final String customerName;
+  /// The whole customer, not just a name: pushing the review route rebuilds
+  /// this route and the customer details route above it, both of which read
+  /// the customer back out of the navigation extra.
+  final Customer customer;
 
   @override
   Widget build(BuildContext context) {
@@ -24,7 +29,7 @@ class NewOrderPage extends StatelessWidget {
     return Scaffold(
       appBar: AppTopBar(
         title: 'New Order',
-        subtitle: customerName,
+        subtitle: customer.name,
         showBackButton: true,
       ),
       body: SafeArea(
@@ -97,7 +102,13 @@ class NewOrderPage extends StatelessWidget {
                     ],
                   ),
                   const SizedBox(height: AppSpacing.md),
-                  AppButton(label: "Review Order", onPressed: (){}),
+                  AppButton(
+                    label: "Review Order",
+                    onPressed: () => ReviewOrderRoute(
+                      customerId: customer.id,
+                      $extra: customer,
+                    ).push(context),
+                  ),
                 ],
               ),
             ),
