@@ -19,6 +19,7 @@ import 'package:sales_pal/features/orders/domain/repositories/order_repository.d
 import 'package:sales_pal/features/orders/presentation/cubit/submit_order_cubit.dart';
 import 'package:sales_pal/features/orders/presentation/pages/orders_page.dart';
 import 'package:sales_pal/features/products/domain/entities/product.dart';
+import 'package:sales_pal/features/products/presentation/pages/products_page.dart';
 
 import '../../support/dependencies.dart';
 import '../../support/pumping.dart';
@@ -88,44 +89,129 @@ void main() {
   setUpAll(() => GoogleFonts.config.allowRuntimeFetching = false);
   useTestDependencies();
 
-  testWidgets('create order opens the cart for that customer', (tester) async {
+  /// Create Order lands on the products tab, not on an empty cart.
+  Future<void> startOrderFor(WidgetTester tester) async {
+    await _pumpAtCustomerDetails(tester);
+    await tester.tap(find.text('Create Order'));
+    await tester.pumpAndSettle();
+  }
+
+  /// Walks the whole flow the way a rep would: pick a customer, add products,
+  /// open the cart, review it.
+  Future<void> pumpAtReview(WidgetTester tester) async {
+    getIt<OrderDraftCubit>()
+      ..addProduct(_coffee)
+      ..addProduct(_oil);
+
+    await startOrderFor(tester);
+    await tester.tap(find.text('View Cart (2)'));
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('Review Order'));
+    await tester.pumpAndSettle();
+  }
+
+  testWidgets('create order sends the rep to the products tab', (tester) async {
     await _pumpAtCustomerDetails(tester);
     expect(find.byType(CustomerDetailsPage), findsOneWidget);
 
     await tester.tap(find.text('Create Order'));
     await tester.pumpAndSettle();
 
-    expect(find.byType(NewOrderPage), findsOneWidget);
-    expect(find.text('Acme Groceries Ltd.'), findsOneWidget);
+    expect(find.byType(ProductsPage), findsOneWidget);
+    expect(find.byType(CustomerDetailsPage), findsNothing);
+    // The pairing has to be visible, or the rep has no sign that what they
+    // add next is going onto somebody's order.
+    expect(find.text('Ordering for Acme Groceries Ltd.'), findsOneWidget);
     expect(getIt<OrderDraftCubit>().state.customer, _customer);
   });
 
-  testWidgets('an empty cart cannot be reviewed', (tester) async {
-    await _pumpAtCustomerDetails(tester);
-    await tester.tap(find.text('Create Order'));
-    await tester.pumpAndSettle();
+  testWidgets('an empty cart cannot be opened', (tester) async {
+    await startOrderFor(tester);
 
-    final reviewButton = tester.widget<OutlinedButton>(
+    final viewCart = tester.widget<OutlinedButton>(
       find.ancestor(
-        of: find.text('Review Order'),
+        of: find.text('View Cart'),
         matching: find.byType(OutlinedButton),
       ),
     );
 
-    expect(reviewButton.onPressed, isNull);
+    expect(viewCart.onPressed, isNull);
   });
 
-  testWidgets('new order pushes the review order page', (tester) async {
+  testWidgets('leaving products drops a customer with nothing added', (
+    tester,
+  ) async {
+    await startOrderFor(tester);
+    expect(getIt<OrderDraftCubit>().state.customer, _customer);
+
+    await tester.tap(find.text('Customers'));
+    await tester.pumpAndSettle();
+
+    expect(getIt<OrderDraftCubit>().state.customer, isNull);
+  });
+
+  testWidgets('leaving products keeps a cart that has items', (tester) async {
+    getIt<OrderDraftCubit>().addProduct(_coffee);
+    await startOrderFor(tester);
+
+    await tester.tap(find.text('Customers'));
+    await tester.pumpAndSettle();
+
+    // The rep's work survives; Cancel is how they discard it deliberately.
+    expect(getIt<OrderDraftCubit>().state.customer, _customer);
+    expect(getIt<OrderDraftCubit>().state.productCount, 1);
+  });
+
+  testWidgets('cancel discards an order that has not been started', (
+    tester,
+  ) async {
+    await startOrderFor(tester);
+
+    await tester.tap(find.text('Cancel'));
+    await tester.pumpAndSettle();
+
+    // Nothing to lose, so it goes without asking.
+    expect(getIt<OrderDraftCubit>().state.customer, isNull);
+    expect(find.text('Ordering for Acme Groceries Ltd.'), findsNothing);
+  });
+
+  testWidgets('cancel asks before throwing away a cart with items', (
+    tester,
+  ) async {
+    getIt<OrderDraftCubit>().addProduct(_coffee);
+    await startOrderFor(tester);
+
+    await tester.tap(find.text('Cancel'));
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('Keep'));
+    await tester.pumpAndSettle();
+
+    expect(getIt<OrderDraftCubit>().state.productCount, 1);
+
+    await tester.tap(find.text('Cancel'));
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('Discard'));
+    await tester.pumpAndSettle();
+
+    expect(getIt<OrderDraftCubit>().state.isEmpty, isTrue);
+    expect(getIt<OrderDraftCubit>().state.customer, isNull);
+  });
+
+  testWidgets('view cart opens the order it belongs to', (tester) async {
     getIt<OrderDraftCubit>()
       ..addProduct(_coffee)
       ..addProduct(_oil);
 
-    await _pumpAtCustomerDetails(tester);
-    await tester.tap(find.text('Create Order'));
+    await startOrderFor(tester);
+    await tester.tap(find.text('View Cart (2)'));
     await tester.pumpAndSettle();
 
-    await tester.tap(find.text('Review Order'));
-    await tester.pumpAndSettle();
+    expect(find.byType(NewOrderPage), findsOneWidget);
+    expect(find.text('Acme Groceries Ltd.'), findsOneWidget);
+  });
+
+  testWidgets('new order pushes the review order page', (tester) async {
+    await pumpAtReview(tester);
 
     expect(find.byType(ReviewOrderPage), findsOneWidget);
     expect(find.text('Order Total'), findsOneWidget);
@@ -136,13 +222,7 @@ void main() {
   });
 
   testWidgets('review order pops back to the new order page', (tester) async {
-    getIt<OrderDraftCubit>().addProduct(_coffee);
-
-    await _pumpAtCustomerDetails(tester);
-    await tester.tap(find.text('Create Order'));
-    await tester.pumpAndSettle();
-    await tester.tap(find.text('Review Order'));
-    await tester.pumpAndSettle();
+    await pumpAtReview(tester);
 
     await tester.tap(find.text('Edit Order'));
     await tester.pumpAndSettle();
@@ -150,18 +230,6 @@ void main() {
     expect(find.byType(NewOrderPage), findsOneWidget);
     expect(find.byType(ReviewOrderPage), findsNothing);
   });
-
-  Future<void> pumpAtReview(WidgetTester tester) async {
-    getIt<OrderDraftCubit>()
-      ..addProduct(_coffee)
-      ..addProduct(_oil);
-
-    await _pumpAtCustomerDetails(tester);
-    await tester.tap(find.text('Create Order'));
-    await tester.pumpAndSettle();
-    await tester.tap(find.text('Review Order'));
-    await tester.pumpAndSettle();
-  }
 
   Future<List<Order>> ordersWithStatus(
     WidgetTester tester,

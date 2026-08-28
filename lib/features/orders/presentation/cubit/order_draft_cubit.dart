@@ -52,6 +52,10 @@ class OrderDraftCubit extends Cubit<OrderDraft> {
 
   void clear() => emit(const OrderDraft());
 
+  void abandonIfEmpty() {
+    if (state.customer != null && state.isEmpty) clear();
+  }
+
   void _changeQuantity(String productId, int delta) => emit(
     state.copyWith(
       lines: [

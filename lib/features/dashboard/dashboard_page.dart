@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
+
+import '../orders/presentation/cubit/order_draft_cubit.dart';
 
 import '../../design/components/app_top_bar.dart';
 import '../../design/sizes.dart';
@@ -24,7 +27,14 @@ class DashboardPage extends StatelessWidget {
     ),
   ];
 
-  void _onDestinationSelected(int index) {
+  static const _productsIndex = 1;
+
+  void _onDestinationSelected(BuildContext context, int index) {
+    if (index != _productsIndex &&
+        navigationShell.currentIndex == _productsIndex) {
+      context.read<OrderDraftCubit>().abandonIfEmpty();
+    }
+
     navigationShell.goBranch(
       index,
       initialLocation: index == navigationShell.currentIndex,
@@ -57,7 +67,8 @@ class DashboardPage extends StatelessWidget {
         ),
         child: NavigationBar(
           selectedIndex: navigationShell.currentIndex,
-          onDestinationSelected: _onDestinationSelected,
+          onDestinationSelected: (index) =>
+              _onDestinationSelected(context, index),
           destinations: [
             for (final destination in _destinations)
               NavigationDestination(
