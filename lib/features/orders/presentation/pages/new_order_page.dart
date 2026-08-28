@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:sales_pal/core/format/app_format.dart';
 import 'package:sales_pal/core/navigation/app_routes.dart';
-import 'package:sales_pal/features/customers/domain/customer.dart';
+import 'package:sales_pal/features/customers/domain/entities/customer.dart';
 import 'package:sales_pal/design/components/app_button.dart';
 import 'package:sales_pal/design/components/app_top_bar.dart';
 import 'package:sales_pal/design/spacing.dart';
@@ -14,9 +14,6 @@ import '../../../../design/sizes.dart';
 class NewOrderPage extends StatelessWidget {
   const NewOrderPage({super.key, required this.customer});
 
-  /// The whole customer, not just a name: pushing the review route rebuilds
-  /// this route and the customer details route above it, both of which read
-  /// the customer back out of the navigation extra.
   final Customer customer;
 
   @override

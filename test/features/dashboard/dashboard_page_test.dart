@@ -1,10 +1,20 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:sales_pal/core/data/json_asset_loader.dart';
+import 'package:sales_pal/core/di/injection.dart';
 import 'package:sales_pal/design/sizes.dart';
 import 'package:sales_pal/main.dart';
 
 void main() {
+  setUp(() async {
+    JsonAssetLoader.latency = Duration.zero;
+    rootBundle.clear();
+    await getIt.reset();
+    await configureDependencies();
+  });
+
   group('DashboardPage navigation bar', () {
     testWidgets('icons take their size from navigationBarTheme', (
       tester,

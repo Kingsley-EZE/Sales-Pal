@@ -1,4 +1,4 @@
-import '../../products/domain/product.dart';
+import '../../products/domain/entities/product.dart';
 
 class OrderLineItem {
   const OrderLineItem({required this.product, required this.quantity});

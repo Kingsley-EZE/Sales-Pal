@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:sales_pal/core/format/app_format.dart';
 import 'package:sales_pal/design/components/app_badge.dart';
 import 'package:sales_pal/design/spacing.dart';
-import 'package:sales_pal/features/customers/domain/order.dart';
+import 'package:sales_pal/features/customers/domain/entities/order.dart';
 
 class OrderListItem extends StatelessWidget {
   const OrderListItem({super.key, required this.order});

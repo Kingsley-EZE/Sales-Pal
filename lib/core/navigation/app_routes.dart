@@ -1,8 +1,12 @@
 import 'package:flutter/widgets.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 
-import '../../features/customers/domain/customer.dart';
-import '../../features/customers/domain/sample_orders.dart';
+import '../../features/customers/domain/entities/customer.dart';
+import '../../features/customers/presentation/cubit/customers_cubit.dart';
+import '../../features/products/presentation/cubit/products_cubit.dart';
+import '../di/injection.dart';
+import '../../features/customers/data/sample_orders.dart';
 import '../../features/customers/presentation/pages/customer_details_page.dart';
 import '../../features/customers/presentation/pages/customers_page.dart';
 import '../../features/dashboard/dashboard_page.dart';
@@ -78,8 +82,10 @@ final class CustomersRoute extends GoRouteData with $CustomersRoute {
   const CustomersRoute();
 
   @override
-  Widget build(BuildContext context, GoRouterState state) =>
-      const CustomersPage();
+  Widget build(BuildContext context, GoRouterState state) => BlocProvider(
+    create: (_) => getIt<CustomersCubit>()..load(),
+    child: const CustomersPage(),
+  );
 }
 
 final class CustomerDetailsRoute extends GoRouteData
@@ -126,8 +132,10 @@ final class ProductsRoute extends GoRouteData with $ProductsRoute {
   const ProductsRoute();
 
   @override
-  Widget build(BuildContext context, GoRouterState state) =>
-      const ProductsPage();
+  Widget build(BuildContext context, GoRouterState state) => BlocProvider(
+    create: (_) => getIt<ProductsCubit>()..load(),
+    child: const ProductsPage(),
+  );
 }
 
 final class OrdersRoute extends GoRouteData with $OrdersRoute {

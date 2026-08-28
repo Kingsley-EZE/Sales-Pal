@@ -5,7 +5,7 @@ import 'package:sales_pal/design/components/app_card.dart';
 import 'package:sales_pal/design/components/app_icon_label.dart';
 import 'package:sales_pal/design/sizes.dart';
 import 'package:sales_pal/design/spacing.dart';
-import 'package:sales_pal/features/customers/domain/customer.dart';
+import 'package:sales_pal/features/customers/domain/entities/customer.dart';
 import 'package:sales_pal/gen/assets.gen.dart';
 
 class CustomerListItem extends StatelessWidget {

@@ -1,4 +1,7 @@
-class Customer {
+import 'package:equatable/equatable.dart';
+
+
+class Customer extends Equatable {
   const Customer({
     required this.id,
     required this.name,
@@ -14,4 +17,7 @@ class Customer {
   final double amountDue;
 
   bool get hasOutstandingBalance => amountDue > 0;
+
+  @override
+  List<Object?> get props => [id, name, location, phoneNumber, amountDue];
 }

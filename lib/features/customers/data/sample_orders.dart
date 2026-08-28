@@ -1,4 +1,4 @@
-import 'order.dart';
+import '../domain/entities/order.dart';
 
 final sampleOrders = <Order>[
   Order(

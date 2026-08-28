@@ -1,10 +1,20 @@
+import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:sales_pal/core/data/json_asset_loader.dart';
+import 'package:sales_pal/core/di/injection.dart';
 import 'package:sales_pal/features/customers/presentation/pages/customers_page.dart';
 import 'package:sales_pal/features/orders/presentation/pages/orders_page.dart';
 import 'package:sales_pal/features/products/presentation/pages/products_page.dart';
 import 'package:sales_pal/main.dart';
 
 void main() {
+  setUp(() async {
+    JsonAssetLoader.latency = Duration.zero;
+    rootBundle.clear();
+    await getIt.reset();
+    await configureDependencies();
+  });
+
   group('AppRouter', () {
     testWidgets('starts on the customers branch', (tester) async {
       await tester.pumpWidget(const MyApp());
