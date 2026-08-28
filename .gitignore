@@ -27,6 +27,7 @@ migrate_working_dir/
 # Generated code — run `dart run build_runner build` after cloning
 lib/gen/
 *.g.dart
+*.config.dart
 **/doc/api/
 **/ios/Flutter/.last_build_id
 .dart_tool/

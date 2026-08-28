@@ -1,4 +1,4 @@
-import '../../customers/domain/order.dart';
+import '../../customers/domain/entities/order.dart';
 
 final sampleQueuedOrders = <Order>[
   Order(

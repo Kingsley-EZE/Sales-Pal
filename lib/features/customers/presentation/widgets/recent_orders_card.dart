@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:sales_pal/design/components/app_card.dart';
 import 'package:sales_pal/design/spacing.dart';
-import 'package:sales_pal/features/customers/domain/order.dart';
+import 'package:sales_pal/features/customers/domain/entities/order.dart';
 import 'package:sales_pal/features/customers/presentation/widgets/order_list_item.dart';
 
 class RecentOrdersCard extends StatelessWidget {

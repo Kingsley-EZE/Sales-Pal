@@ -1,0 +1,58 @@
+[
+  {
+    "id": "PRD-001",
+    "name": "Organic Premium Roast Coffee (1kg)",
+    "imagePath": "assets/images/img_product_sample.png",
+    "stockUnits": 112,
+    "price": 24.50
+  },
+  {
+    "id": "PRD-002",
+    "name": "Extra Virgin Olive Oil (750ml)",
+    "imagePath": "assets/images/img_product_sample.png",
+    "stockUnits": 45,
+    "price": 18.90
+  },
+  {
+    "id": "PRD-003",
+    "name": "Whole Grain Wheat Crackers (200g)",
+    "imagePath": "assets/images/img_product_sample.png",
+    "stockUnits": 320,
+    "price": 4.25
+  },
+  {
+    "id": "PRD-004",
+    "name": "Unsweetened Almond Milk (1L)",
+    "imagePath": "assets/images/img_product_sample.png",
+    "stockUnits": 18,
+    "price": 5.10
+  },
+  {
+    "id": "PRD-005",
+    "name": "Basmati Rice (5kg)",
+    "imagePath": "assets/images/img_product_sample.png",
+    "stockUnits": 76,
+    "price": 32.00
+  },
+  {
+    "id": "PRD-006",
+    "name": "Dark Chocolate Bars (Case of 24)",
+    "imagePath": "assets/images/img_product_sample.png",
+    "stockUnits": 0,
+    "price": 41.75
+  },
+  {
+    "id": "PRD-007",
+    "name": "Sparkling Water (12 x 500ml)",
+    "imagePath": "assets/images/img_product_sample.png",
+    "stockUnits": 240,
+    "price": 9.60
+  },
+  {
+    "id": "PRD-008",
+    "name": "Cold Pressed Orange Juice (1L)",
+    "imagePath": "assets/images/img_product_sample.png",
+    "stockUnits": 54,
+    "price": 7.35
+  }
+]

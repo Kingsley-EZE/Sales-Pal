@@ -1,0 +1,44 @@
+[
+  {
+    "id": "CUS-001",
+    "name": "Acme Groceries Ltd.",
+    "location": "Downtown Outlet",
+    "phoneNumber": "(555) 019-2831",
+    "amountDue": 1240.00
+  },
+  {
+    "id": "CUS-002",
+    "name": "Apex Supermarkets",
+    "location": "Westside Mall",
+    "phoneNumber": "(555) 014-9988",
+    "amountDue": 0
+  },
+  {
+    "id": "CUS-003",
+    "name": "Bayside Gourmet Store",
+    "location": "Harbor Walk",
+    "phoneNumber": "(555) 012-4411",
+    "amountDue": 450.00
+  },
+  {
+    "id": "CUS-004",
+    "name": "Downtown Bistro",
+    "location": "Church Street",
+    "phoneNumber": "(555) 077-3120",
+    "amountDue": 512.20
+  },
+  {
+    "id": "CUS-005",
+    "name": "Greenfield Provisions",
+    "location": "Lekki Phase 1",
+    "phoneNumber": "(555) 041-7765",
+    "amountDue": 0
+  },
+  {
+    "id": "CUS-006",
+    "name": "Harvest Fresh Market",
+    "location": "Ikeja City Centre",
+    "phoneNumber": "(555) 088-2049",
+    "amountDue": 87.10
+  }
+]

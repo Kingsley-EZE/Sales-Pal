@@ -4,7 +4,7 @@ import 'package:sales_pal/design/components/app_card.dart';
 import 'package:sales_pal/design/radius.dart';
 import 'package:sales_pal/design/sizes.dart';
 import 'package:sales_pal/design/spacing.dart';
-import 'package:sales_pal/features/products/domain/product.dart';
+import 'package:sales_pal/features/products/domain/entities/product.dart';
 import 'package:sales_pal/features/products/presentation/widgets/add_product_button.dart';
 
 class ProductListItem extends StatelessWidget {
