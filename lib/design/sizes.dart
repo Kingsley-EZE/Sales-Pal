@@ -15,4 +15,6 @@ abstract final class AppSize {
 
   static const dividerThickness = 1.0;
   static const productThumbnail = 64.0;
+
+  static const statusIllustration = 120.0;
 }

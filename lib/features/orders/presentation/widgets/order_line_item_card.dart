@@ -3,7 +3,7 @@ import 'package:sales_pal/core/format/app_format.dart';
 import 'package:sales_pal/design/components/app_card.dart';
 import 'package:sales_pal/design/sizes.dart';
 import 'package:sales_pal/design/spacing.dart';
-import 'package:sales_pal/features/orders/domain/order_line_item.dart';
+import 'package:sales_pal/features/orders/domain/entities/order_line_item.dart';
 import 'package:sales_pal/features/orders/presentation/widgets/quantity_stepper.dart';
 import 'package:sales_pal/gen/assets.gen.dart';
 
@@ -37,18 +37,28 @@ class OrderLineItemCard extends StatelessWidget {
             children: [
               Expanded(
                 child: Text(
-                  lineItem.product.name,
+                  lineItem.productName,
                   maxLines: 2,
                   overflow: TextOverflow.ellipsis,
                   style: textTheme.titleSmall,
                 ),
               ),
-              Assets.icons.icTrash.svg(
-                width: AppIconSize.sm,
-                height: AppIconSize.sm,
-                colorFilter: ColorFilter.mode(
-                  colorScheme.onSurfaceVariant,
-                  BlendMode.srcIn,
+              IconButton(
+                onPressed: onRemove,
+                tooltip: 'Remove ${lineItem.productName}',
+                padding: EdgeInsets.zero,
+                constraints: const BoxConstraints.tightFor(
+                  width: AppIconSize.lg,
+                  height: AppIconSize.lg,
+                ),
+                visualDensity: VisualDensity.compact,
+                icon: Assets.icons.icTrash.svg(
+                  width: AppIconSize.sm,
+                  height: AppIconSize.sm,
+                  colorFilter: ColorFilter.mode(
+                    colorScheme.onSurfaceVariant,
+                    BlendMode.srcIn,
+                  ),
                 ),
               ),
             ],
@@ -62,7 +72,7 @@ class OrderLineItemCard extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      'Unit Price: ${AppFormat.currency(lineItem.product.price)}',
+                      'Unit Price: ${AppFormat.currency(lineItem.unitPrice)}',
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
                       style: textTheme.bodySmall?.copyWith(
@@ -80,7 +90,7 @@ class OrderLineItemCard extends StatelessWidget {
               ),
               QuantityStepper(
                 quantity: lineItem.quantity,
-                onDecrement: onDecrement,
+                onDecrement: lineItem.quantity > 1 ? onDecrement : null,
                 onIncrement: onIncrement,
               ),
             ],
