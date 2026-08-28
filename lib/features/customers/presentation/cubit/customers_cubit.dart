@@ -21,8 +21,15 @@ class CustomersCubit extends Cubit<CustomersState> {
     emit(
       result.fold(
         (failure) => CustomersFailed(failure.message),
-        CustomersLoaded.new,
+        (customers) => CustomersLoaded(all: customers),
       ),
     );
+  }
+
+  void search(String query) {
+    final current = state;
+    if (current is! CustomersLoaded) return;
+
+    emit(current.copyWith(query: query));
   }
 }

@@ -18,6 +18,13 @@ class Customer extends Equatable {
 
   bool get hasOutstandingBalance => amountDue > 0;
 
+  bool matches(String query) {
+    final term = query.trim().toLowerCase();
+
+    return name.toLowerCase().contains(term) ||
+        location.toLowerCase().contains(term);
+  }
+
   @override
   List<Object?> get props => [id, name, location, phoneNumber, amountDue];
 }

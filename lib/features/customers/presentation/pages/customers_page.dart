@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:sales_pal/core/navigation/app_routes.dart';
 import 'package:sales_pal/design/components/search_field.dart';
+import 'package:sales_pal/features/customers/presentation/cubit/customers_cubit.dart';
 import 'package:sales_pal/features/customers/presentation/widgets/customer_list_view.dart';
 
 class CustomersPage extends StatelessWidget {
@@ -10,7 +12,10 @@ class CustomersPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Column(
       children: [
-        SearchField(hintText: "Search customers by name or location"),
+        SearchField(
+          hintText: "Search customers by name or location",
+          onChanged: context.read<CustomersCubit>().search,
+        ),
         Expanded(
           child: CustomerListView(
             onCustomerTap: (customer) => CustomerDetailsRoute(
