@@ -11,9 +11,16 @@ class DashboardPage extends StatelessWidget {
   final StatefulNavigationShell navigationShell;
 
   static final _destinations = <_DashboardDestination>[
-    _DashboardDestination(label: 'Customers', icon: Assets.icons.icNavCustomers),
+    _DashboardDestination(
+      label: 'Customers',
+      icon: Assets.icons.icNavCustomers,
+    ),
     _DashboardDestination(label: 'Products', icon: Assets.icons.icNavProducts),
-    _DashboardDestination(label: 'Orders', icon: Assets.icons.icNavOrders),
+    _DashboardDestination(
+      label: 'Orders Queue',
+      icon: Assets.icons.icNavOrders,
+      subtitle: "Manage submissions and offline drafts",
+    ),
   ];
 
   void _onDestinationSelected(int index) {
@@ -33,6 +40,7 @@ class DashboardPage extends StatelessWidget {
     return Scaffold(
       appBar: AppTopBar(
         title: _destinations[navigationShell.currentIndex].label,
+        subtitle: _destinations[navigationShell.currentIndex].subtitle,
       ),
       body: SafeArea(child: navigationShell),
       bottomNavigationBar: DecoratedBox(
@@ -52,7 +60,10 @@ class DashboardPage extends StatelessWidget {
             for (final destination in _destinations)
               NavigationDestination(
                 label: destination.label,
-                icon: destination.buildIcon(navigationBarTheme, selected: false),
+                icon: destination.buildIcon(
+                  navigationBarTheme,
+                  selected: false,
+                ),
                 selectedIcon: destination.buildIcon(
                   navigationBarTheme,
                   selected: true,
@@ -66,9 +77,14 @@ class DashboardPage extends StatelessWidget {
 }
 
 class _DashboardDestination {
-  const _DashboardDestination({required this.label, required this.icon});
+  const _DashboardDestination({
+    required this.label,
+    required this.icon,
+    this.subtitle,
+  });
 
   final String label;
+  final String? subtitle;
   final SvgGenImage icon;
 
   Widget buildIcon(NavigationBarThemeData theme, {required bool selected}) {

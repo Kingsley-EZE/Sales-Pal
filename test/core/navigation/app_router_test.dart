@@ -21,7 +21,7 @@ void main() {
       await tester.pumpAndSettle();
       expect(find.byType(ProductsPage), findsOneWidget);
 
-      await tester.tap(find.text('Orders'));
+      await tester.tap(find.text('Orders Queue'));
       await tester.pumpAndSettle();
       expect(find.byType(OrdersPage), findsOneWidget);
     });
