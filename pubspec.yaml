@@ -22,8 +22,9 @@ dependencies:
   get_it: ^9.2.1
   injectable: ^3.0.0
   dartz: ^0.10.1
-  internet_connection_checker_plus: ^3.1.1
   equatable: ^2.1.0
+  sqflite: ^2.4.2
+  path: ^1.9.1
 
 dev_dependencies:
   flutter_test:
@@ -34,6 +35,7 @@ dev_dependencies:
   flutter_gen_runner: ^5.15.0
   go_router_builder: ^4.3.1
   injectable_generator: ^3.1.0
+  sqflite_common_ffi: ^2.3.6
 
 flutter:
 

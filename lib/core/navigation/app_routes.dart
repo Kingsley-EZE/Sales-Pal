@@ -116,16 +116,14 @@ final class ReviewOrderRoute extends GoRouteData with $ReviewOrderRoute {
 }
 
 
-@TypedGoRoute<OrderSubmissionStatusRoute>(path: '/order-status/:status')
+@TypedGoRoute<OrderSubmissionStatusRoute>(path: '/order-status')
 final class OrderSubmissionStatusRoute extends GoRouteData
     with $OrderSubmissionStatusRoute {
-  const OrderSubmissionStatusRoute({required this.status});
-
-  final OrderSubmissionStatus status;
+  const OrderSubmissionStatusRoute();
 
   @override
   Widget build(BuildContext context, GoRouterState state) =>
-      OrderSubmissionStatusPage(status: status);
+      const OrderSubmissionStatusPage();
 }
 
 @TypedGoRoute<SelectCustomerRoute>(path: '/select-customer')

@@ -1,10 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:sales_pal/core/data/json_asset_loader.dart';
+import 'package:sales_pal/core/connectivity/connectivity_cubit.dart';
 import 'package:sales_pal/core/di/injection.dart';
 import 'package:sales_pal/core/navigation/app_routes.dart';
 import 'package:sales_pal/design/theme.dart';
@@ -15,7 +14,13 @@ import 'package:sales_pal/features/customers/presentation/widgets/customer_list_
 import 'package:sales_pal/features/orders/presentation/cubit/order_draft_cubit.dart';
 import 'package:sales_pal/features/orders/presentation/pages/new_order_page.dart';
 import 'package:sales_pal/features/orders/presentation/pages/review_order_page.dart';
+import 'package:sales_pal/features/orders/domain/entities/order.dart';
+import 'package:sales_pal/features/orders/domain/repositories/order_repository.dart';
+import 'package:sales_pal/features/orders/presentation/cubit/submit_order_cubit.dart';
+import 'package:sales_pal/features/orders/presentation/pages/orders_page.dart';
 import 'package:sales_pal/features/products/domain/entities/product.dart';
+
+import '../../support/dependencies.dart';
 
 const _customer = Customer(
   id: '3',
@@ -52,8 +57,12 @@ GoRouter _router() => GoRouter(
 Future<GoRouter> _pump(WidgetTester tester) async {
   final router = _router();
   await tester.pumpWidget(
-    BlocProvider.value(
-      value: getIt<OrderDraftCubit>(),
+    MultiBlocProvider(
+      providers: [
+        BlocProvider.value(value: getIt<OrderDraftCubit>()),
+        BlocProvider.value(value: getIt<SubmitOrderCubit>()),
+        BlocProvider.value(value: getIt<ConnectivityCubit>()),
+      ],
       child: MaterialApp.router(theme: AppTheme.light, routerConfig: router),
     ),
   );
@@ -76,13 +85,7 @@ Future<GoRouter> _pumpAtCustomerDetails(WidgetTester tester) async {
 
 void main() {
   setUpAll(() => GoogleFonts.config.allowRuntimeFetching = false);
-
-  setUp(() async {
-    JsonAssetLoader.latency = Duration.zero;
-    rootBundle.clear();
-    await getIt.reset();
-    await configureDependencies();
-  });
+  useTestDependencies();
 
   testWidgets('create order opens the cart for that customer', (tester) async {
     await _pumpAtCustomerDetails(tester);
@@ -145,6 +148,112 @@ void main() {
 
     expect(find.byType(NewOrderPage), findsOneWidget);
     expect(find.byType(ReviewOrderPage), findsNothing);
+  });
+
+  Future<void> pumpAtReview(WidgetTester tester) async {
+    getIt<OrderDraftCubit>()
+      ..addProduct(_coffee)
+      ..addProduct(_oil);
+
+    await _pumpAtCustomerDetails(tester);
+    await tester.tap(find.text('Create Order'));
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('Review Order'));
+    await tester.pumpAndSettle();
+  }
+
+  Future<void> tapThroughDatabase(WidgetTester tester, String label) async {
+    await tester.runAsync(() async {
+      await tester.tap(find.text(label));
+      await tester.pump();
+      await Future<void>.delayed(const Duration(milliseconds: 100));
+    });
+    await tester.pumpAndSettle();
+  }
+
+  Future<List<Order>> ordersWithStatus(
+    WidgetTester tester,
+    OrderStatus status,
+  ) async {
+    final result = await tester.runAsync(
+      () => getIt<OrderRepository>().ordersByStatus(status),
+    );
+
+    return result!.getOrElse(() => []);
+  }
+
+  testWidgets('submitting online reports the order as sent', (tester) async {
+    await pumpAtReview(tester);
+
+    await tapThroughDatabase(tester, 'Submit Order');
+
+    expect(find.text('Order Submitted!'), findsOneWidget);
+    expect(find.byType(ReviewOrderPage), findsNothing);
+
+    final state = getIt<SubmitOrderCubit>().state as SubmitOrderSucceeded;
+    expect(state.order.status, OrderStatus.submitted);
+    expect(state.order.total, closeTo(43.40, 0.001));
+
+    final stored = await ordersWithStatus(tester, OrderStatus.submitted);
+    expect(
+      stored.map((order) => order.reference),
+      contains(state.order.reference),
+    );
+  });
+
+  testWidgets('submitting offline fails and keeps nothing', (tester) async {
+    await pumpAtReview(tester);
+    getIt<ConnectivityCubit>().setOnline(isOnline: false);
+
+    await tapThroughDatabase(tester, 'Submit Order');
+
+    expect(find.text('Submission Failed'), findsOneWidget);
+    expect(find.text('Save as Pending'), findsOneWidget);
+    expect(find.text('Retry'), findsOneWidget);
+
+    final reference =
+        (getIt<SubmitOrderCubit>().state as SubmitOrderFailed).order.reference;
+    final pending = await ordersWithStatus(tester, OrderStatus.pending);
+
+    expect(pending.map((order) => order.reference), isNot(contains(reference)));
+  });
+
+  testWidgets('Save as Pending stores the order and clears the cart', (
+    tester,
+  ) async {
+    await pumpAtReview(tester);
+    getIt<ConnectivityCubit>().setOnline(isOnline: false);
+
+    await tapThroughDatabase(tester, 'Submit Order');
+    final reference =
+        (getIt<SubmitOrderCubit>().state as SubmitOrderFailed).order.reference;
+    await tapThroughDatabase(tester, 'Save as Pending');
+
+    expect(find.byType(OrdersPage), findsOneWidget);
+    expect(getIt<OrderDraftCubit>().state.isEmpty, isTrue);
+
+    final pending = await ordersWithStatus(tester, OrderStatus.pending);
+    expect(pending.map((order) => order.reference), contains(reference));
+  });
+
+  testWidgets('Retry after coming back online sends the same order', (
+    tester,
+  ) async {
+    await pumpAtReview(tester);
+    getIt<ConnectivityCubit>().setOnline(isOnline: false);
+
+    await tapThroughDatabase(tester, 'Submit Order');
+    final failedReference =
+        (getIt<SubmitOrderCubit>().state as SubmitOrderFailed).order.reference;
+
+    getIt<ConnectivityCubit>().setOnline(isOnline: true);
+    await tapThroughDatabase(tester, 'Retry');
+
+    expect(find.text('Order Submitted!'), findsOneWidget);
+    expect(
+      (getIt<SubmitOrderCubit>().state as SubmitOrderSucceeded).order.reference,
+      failedReference,
+    );
   });
 
   testWidgets('view cart asks who the order is for when no customer has been '

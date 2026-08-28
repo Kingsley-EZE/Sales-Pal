@@ -1,40 +1,77 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:sales_pal/core/error/failure.dart';
 import 'package:sales_pal/design/components/app_badge.dart';
 import 'package:sales_pal/design/theme.dart';
+import 'package:sales_pal/features/orders/domain/entities/order_line_item.dart';
+import 'package:sales_pal/features/orders/presentation/cubit/order_draft_cubit.dart';
+import 'package:sales_pal/features/orders/presentation/cubit/submit_order_cubit.dart';
 import 'package:sales_pal/features/orders/presentation/pages/order_submission_status_page.dart';
 
-Future<void> _pump(
-  WidgetTester tester,
-  OrderSubmissionStatus status, {
-  VoidCallback? onSaveAsPending,
-  VoidCallback? onRetry,
-}) async {
-  await tester.pumpWidget(
-    MaterialApp(
-      theme: AppTheme.light,
-      home: OrderSubmissionStatusPage(
-        status: status,
-        onSaveAsPending: onSaveAsPending,
-        onRetry: onRetry,
-      ),
-    ),
-  );
-  await tester.pumpAndSettle();
-}
+import '../../../../support/fake_order_repository.dart';
+
+const _lines = [
+  OrderLineItem(
+    productId: 'PRD-001',
+    productName: 'Organic Premium Roast Coffee (1kg)',
+    unitPrice: 24.50,
+    quantity: 2,
+  ),
+];
 
 void main() {
   setUpAll(() => GoogleFonts.config.allowRuntimeFetching = false);
 
+  late FakeOrderRepository repository;
+  late SubmitOrderCubit submission;
+  late OrderDraftCubit draft;
+
+  setUp(() {
+    repository = FakeOrderRepository();
+    submission = SubmitOrderCubit(repository);
+    draft = OrderDraftCubit();
+  });
+
+  tearDown(() async {
+    await submission.close();
+    await draft.close();
+  });
+
+  Future<void> pump(WidgetTester tester) async {
+    await tester.pumpWidget(
+      MultiBlocProvider(
+        providers: [
+          BlocProvider.value(value: submission),
+          BlocProvider.value(value: draft),
+        ],
+        child: MaterialApp(
+          theme: AppTheme.light,
+          home: const OrderSubmissionStatusPage(),
+        ),
+      ),
+    );
+    await tester.pumpAndSettle();
+  }
+
+  Future<void> submit() => submission.submit(
+    customerId: 'CUS-001',
+    customerName: 'Acme Groceries Ltd.',
+    lines: _lines,
+  );
+
   group('succeeded', () {
-    testWidgets('reports the order reference and a single way onward', (
+    testWidgets('reports the reference the order was sent under', (
       tester,
     ) async {
-      await _pump(tester, OrderSubmissionStatus.succeeded);
+      await submit();
+      await pump(tester);
+
+      final reference = repository.submitted.single.reference;
 
       expect(find.text('Order Submitted!'), findsOneWidget);
-      expect(find.text('ORDER #FF-2026-9042'), findsOneWidget);
+      expect(find.text('ORDER #$reference'), findsOneWidget);
       expect(find.byType(AppBadge), findsOneWidget);
       expect(find.text('Back to Customers'), findsOneWidget);
       expect(find.text('Retry'), findsNothing);
@@ -42,7 +79,8 @@ void main() {
     });
 
     testWidgets('draws the heading in the primary colour', (tester) async {
-      await _pump(tester, OrderSubmissionStatus.succeeded);
+      await submit();
+      await pump(tester);
 
       final heading = tester.widget<Text>(find.text('Order Submitted!'));
 
@@ -54,7 +92,9 @@ void main() {
     testWidgets('offers both recovery actions and no reference', (
       tester,
     ) async {
-      await _pump(tester, OrderSubmissionStatus.failed);
+      repository.submitFailure = const OfflineFailure();
+      await submit();
+      await pump(tester);
 
       expect(find.text('Submission Failed'), findsOneWidget);
       expect(find.byType(AppBadge), findsNothing);
@@ -64,47 +104,46 @@ void main() {
     });
 
     testWidgets('draws the heading in the error colour', (tester) async {
-      await _pump(tester, OrderSubmissionStatus.failed);
+      repository.submitFailure = const OfflineFailure();
+      await submit();
+      await pump(tester);
 
       final heading = tester.widget<Text>(find.text('Submission Failed'));
 
       expect(heading.style?.color, AppTheme.light.colorScheme.error);
     });
 
-    testWidgets('both actions are disabled until step 3 supplies them', (
-      tester,
-    ) async {
-      await _pump(tester, OrderSubmissionStatus.failed);
+    testWidgets('explains the failure it was actually given', (tester) async {
+      repository.submitFailure = const DataFailure('The server said no.');
+      await submit();
+      await pump(tester);
 
-      for (final label in ['Save as Pending', 'Retry']) {
-        final button = tester.widget<OutlinedButton>(
-          find.ancestor(
-            of: find.text(label),
-            matching: find.byType(OutlinedButton),
-          ),
-        );
-
-        expect(button.onPressed, isNull, reason: '$label should be disabled');
-      }
+      expect(find.text('The server said no.'), findsOneWidget);
+      expect(find.textContaining('currently offline'), findsNothing);
     });
 
-    testWidgets('invokes the callbacks it is given', (tester) async {
-      var saved = 0;
-      var retried = 0;
+    testWidgets('Retry re-sends the same order', (tester) async {
+      repository.submitFailure = const OfflineFailure();
+      await submit();
+      await pump(tester);
 
-      await _pump(
-        tester,
-        OrderSubmissionStatus.failed,
-        onSaveAsPending: () => saved++,
-        onRetry: () => retried++,
-      );
+      final reference = repository.submitted.single.reference;
+      repository.submitFailure = null;
 
-      await tester.tap(find.text('Save as Pending'));
       await tester.tap(find.text('Retry'));
-      await tester.pump();
+      await tester.pumpAndSettle();
 
-      expect(saved, 1);
-      expect(retried, 1);
+      expect(repository.submitted, hasLength(2));
+      expect(repository.submitted.last.reference, reference);
+      expect(find.text('Order Submitted!'), findsOneWidget);
     });
+  });
+
+  testWidgets('shows nothing when nothing has been submitted', (tester) async {
+    await pump(tester);
+
+    expect(find.byType(Scaffold), findsNothing);
+    expect(find.text('Order Submitted!'), findsNothing);
+    expect(find.text('Submission Failed'), findsNothing);
   });
 }

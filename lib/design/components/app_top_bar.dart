@@ -14,6 +14,7 @@ class AppTopBar extends StatelessWidget implements PreferredSizeWidget {
     this.subtitle,
     this.showBackButton = false,
     this.onBack,
+    this.trailing,
   });
 
   final String title;
@@ -21,8 +22,12 @@ class AppTopBar extends StatelessWidget implements PreferredSizeWidget {
   final bool showBackButton;
   final VoidCallback? onBack;
 
+  final Widget? trailing;
+
   static const _verticalPadding = AppSpacing.md;
   static const _backButtonSize = 40.0;
+
+  static const trailingHeight = AppSize.compactTapTarget;
 
   @override
   Size get preferredSize {
@@ -32,10 +37,14 @@ class AppTopBar extends StatelessWidget implements PreferredSizeWidget {
             ? 0
             : AppTypography.lineHeightOf(AppTypography.pageSubtitle));
 
+    final rowHeight = [
+      titleBlockHeight,
+      if (showBackButton) _backButtonSize,
+      if (trailing != null) trailingHeight,
+    ].reduce(math.max);
+
     return Size.fromHeight(
-      _verticalPadding * 2 +
-          math.max(titleBlockHeight, showBackButton ? _backButtonSize : 0) +
-          AppSize.dividerThickness,
+      _verticalPadding * 2 + rowHeight + AppSize.dividerThickness,
     );
   }
 
@@ -111,6 +120,7 @@ class AppTopBar extends StatelessWidget implements PreferredSizeWidget {
                   ],
                 ),
               ),
+              ?trailing,
             ],
           ),
         ),
