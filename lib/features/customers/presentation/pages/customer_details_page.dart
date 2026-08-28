@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:sales_pal/core/navigation/app_routes.dart';
 import 'package:sales_pal/design/components/app_button.dart';
 import 'package:sales_pal/design/components/app_top_bar.dart';
@@ -8,6 +9,7 @@ import 'package:sales_pal/features/customers/domain/entities/order.dart';
 import 'package:sales_pal/features/customers/presentation/widgets/contact_information_card.dart';
 import 'package:sales_pal/features/customers/presentation/widgets/outstanding_balance_card.dart';
 import 'package:sales_pal/features/customers/presentation/widgets/recent_orders_card.dart';
+import 'package:sales_pal/features/orders/presentation/cubit/order_draft_cubit.dart';
 
 import '../../../../gen/assets.gen.dart';
 
@@ -45,12 +47,13 @@ class CustomerDetailsPage extends StatelessWidget {
       ),
       persistentFooterButtons: [
         AppButton(
-            label: "Create Order",
-            icon: Assets.icons.icPlus.path,
-            onPressed: () => NewOrderRoute(
-              customerId: customer.id,
-              $extra: customer,
-            ).push(context)),
+          label: "Create Order",
+          icon: Assets.icons.icPlus.path,
+          onPressed: () {
+            context.read<OrderDraftCubit>().startFor(customer);
+            const NewOrderRoute().push(context);
+          },
+        ),
       ],
     );
   }

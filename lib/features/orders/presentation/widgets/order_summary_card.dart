@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:sales_pal/core/format/app_format.dart';
 import 'package:sales_pal/design/components/app_card.dart';
 import 'package:sales_pal/design/spacing.dart';
-import 'package:sales_pal/features/orders/domain/order_line_item.dart';
+import 'package:sales_pal/features/orders/domain/entities/order_line_item.dart';
 
 class OrderSummaryCard extends StatelessWidget {
   const OrderSummaryCard({super.key, required this.lineItems});
@@ -69,7 +69,7 @@ class _SummaryRow extends StatelessWidget {
                   text: '${lineItem.quantity}x ',
                   style: textTheme.labelLarge,
                 ),
-                TextSpan(text: lineItem.product.name),
+                TextSpan(text: lineItem.productName),
               ],
             ),
             style: textTheme.bodyMedium,
