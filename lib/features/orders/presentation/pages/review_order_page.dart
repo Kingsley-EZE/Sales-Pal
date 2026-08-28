@@ -8,6 +8,7 @@ import 'package:sales_pal/design/spacing.dart';
 import 'package:sales_pal/features/orders/presentation/cubit/order_draft_cubit.dart';
 import 'package:sales_pal/features/orders/presentation/cubit/submit_order_cubit.dart';
 import 'package:sales_pal/features/orders/presentation/widgets/order_summary_card.dart';
+import 'package:sales_pal/features/orders/presentation/widgets/submit_order_loading.dart';
 import 'package:sales_pal/gen/assets.gen.dart';
 
 class ReviewOrderPage extends StatelessWidget {
@@ -22,30 +23,45 @@ class ReviewOrderPage extends StatelessWidget {
           state is SubmitOrderSucceeded || state is SubmitOrderFailed,
       listener: (context, _) =>
           const OrderSubmissionStatusRoute().pushReplacement(context),
-      child: BlocBuilder<OrderDraftCubit, OrderDraft>(
-        builder: (context, draft) => Scaffold(
-          appBar: AppTopBar(
-            title: 'Review Order',
-            subtitle: 'Please verify details before submission',
-            showBackButton: true,
-          ),
-          body: SafeArea(
-            bottom: false,
-            child: ListView(
-              padding: const EdgeInsets.all(AppSpacing.md),
-              children: [
-                if (draft.customer case final customer?) ...[
-                  AppCard(
-                    child: Text(customer.name, style: textTheme.titleMedium),
-                  ),
-                  const SizedBox(height: AppSpacing.md),
-                ],
-                OrderSummaryCard(lineItems: draft.lines),
-              ],
-            ),
-          ),
-          bottomNavigationBar: _Footer(draft: draft),
+      child: BlocBuilder<SubmitOrderCubit, SubmitOrderState>(
+        builder: (context, submission) => submission is SubmitOrderInProgress
+            ? const SubmitOrderLoading(message: 'Submitting your order…')
+            : _Review(textTheme: textTheme),
+      ),
+    );
+  }
+}
+
+class _Review extends StatelessWidget {
+  const _Review({required this.textTheme});
+
+  final TextTheme textTheme;
+
+  @override
+  Widget build(BuildContext context) {
+    return BlocBuilder<OrderDraftCubit, OrderDraft>(
+      builder: (context, draft) => Scaffold(
+        appBar: AppTopBar(
+          title: 'Review Order',
+          subtitle: 'Please verify details before submission',
+          showBackButton: true,
         ),
+        body: SafeArea(
+          bottom: false,
+          child: ListView(
+            padding: const EdgeInsets.all(AppSpacing.md),
+            children: [
+              if (draft.customer case final customer?) ...[
+                AppCard(
+                  child: Text(customer.name, style: textTheme.titleMedium),
+                ),
+                const SizedBox(height: AppSpacing.md),
+              ],
+              OrderSummaryCard(lineItems: draft.lines),
+            ],
+          ),
+        ),
+        bottomNavigationBar: _Footer(draft: draft),
       ),
     );
   }
@@ -58,24 +74,18 @@ class _Footer extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<SubmitOrderCubit, SubmitOrderState>(
-      builder: (context, state) {
-        final isSubmitting = state is SubmitOrderInProgress;
-        final canSubmit =
-            !isSubmitting && !draft.isEmpty && draft.customer != null;
+    final canSubmit = !draft.isEmpty && draft.customer != null;
 
-        return AppActionFooter(
-          primary: AppAction(
-            label: isSubmitting ? 'Submitting…' : 'Submit Order',
-            icon: isSubmitting ? null : Assets.icons.icCheck.path,
-            onPressed: canSubmit ? () => _submit(context) : null,
-          ),
-          secondary: AppAction(
-            label: 'Edit Order',
-            onPressed: isSubmitting ? null : () => Navigator.maybePop(context),
-          ),
-        );
-      },
+    return AppActionFooter(
+      primary: AppAction(
+        label: 'Submit Order',
+        icon: Assets.icons.icCheck.path,
+        onPressed: canSubmit ? () => _submit(context) : null,
+      ),
+      secondary: AppAction(
+        label: 'Edit Order',
+        onPressed: () => Navigator.maybePop(context),
+      ),
     );
   }
 

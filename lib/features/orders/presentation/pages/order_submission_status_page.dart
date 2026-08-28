@@ -8,19 +8,12 @@ import 'package:sales_pal/design/sizes.dart';
 import 'package:sales_pal/design/spacing.dart';
 import 'package:sales_pal/features/orders/presentation/cubit/order_draft_cubit.dart';
 import 'package:sales_pal/features/orders/presentation/cubit/submit_order_cubit.dart';
+import 'package:sales_pal/features/orders/presentation/widgets/submit_order_loading.dart';
 import 'package:sales_pal/gen/assets.gen.dart';
 
-/// Which outcome the page is reporting.
 enum OrderSubmissionStatus { succeeded, failed }
 
-/// The last screen of the submission flow, shown for both outcomes.
-///
-/// Which outcome and which order both come from [SubmitOrderCubit], so nothing
-/// passed in can disagree with what actually happened.
-///
-/// The screen is terminal on purpose: a failed order exists nowhere but the
-/// submission state, so leaving by any route other than Save as Pending or
-/// Retry would drop it — and a submitted order should not be walked back into.
+
 class OrderSubmissionStatusPage extends StatelessWidget {
   const OrderSubmissionStatusPage({super.key});
 
@@ -33,7 +26,6 @@ class OrderSubmissionStatusPage extends StatelessWidget {
           SubmitOrderSucceeded(:final order) => _Body(
             status: OrderSubmissionStatus.succeeded,
             reference: order.reference,
-            // The order is done, so the cart it came from is spent.
             onPrimary: () => _leaveFor(context, const CustomersRoute().location),
           ),
           SubmitOrderFailed(:final failure) => _Body(
@@ -42,8 +34,10 @@ class OrderSubmissionStatusPage extends StatelessWidget {
             onPrimary: () => _saveAsPending(context),
             onSecondary: context.read<SubmitOrderCubit>().retry,
           ),
-          // Reached only by opening the route with nothing submitted.
-          SubmitOrderIdle() || SubmitOrderInProgress() => const SizedBox.shrink(),
+          SubmitOrderIdle() => const SizedBox.shrink(),
+          SubmitOrderInProgress() => const SubmitOrderLoading(
+            message: 'Sending your order again…',
+          ),
         },
       ),
     );
@@ -51,8 +45,6 @@ class OrderSubmissionStatusPage extends StatelessWidget {
 
   Future<void> _saveAsPending(BuildContext context) async {
     final submission = context.read<SubmitOrderCubit>();
-    // Captured before the await, so nothing reaches for a BuildContext that
-    // the navigation itself may have torn down.
     final leave = _leaver(context);
 
     await submission.saveAsPending();
@@ -76,8 +68,6 @@ class OrderSubmissionStatusPage extends StatelessWidget {
   }
 }
 
-/// Everything but the actions is derived from [status], so the two variants
-/// stay a single layout.
 class _Body extends StatelessWidget {
   const _Body({
     required this.status,
@@ -125,8 +115,6 @@ class _Body extends StatelessWidget {
           padding: const EdgeInsets.symmetric(horizontal: AppSpacing.lg),
           child: Column(
             children: [
-              // Weighted rather than centred, so the block sits high on the
-              // page whether or not the badge and the second button are there.
               const Spacer(),
               icon.svg(
                 width: AppSize.statusIllustration,
