@@ -9,6 +9,7 @@ class AppCard extends StatelessWidget {
     super.key,
     required this.child,
     this.title,
+    this.titleStyle,
     this.titleColor,
     this.backgroundColor,
     this.borderColor,
@@ -18,6 +19,9 @@ class AppCard extends StatelessWidget {
 
   final Widget child;
   final String? title;
+
+  final TextStyle? titleStyle;
+
   final Color? titleColor;
   final Color? backgroundColor;
   final Color? borderColor;
@@ -51,7 +55,7 @@ class AppCard extends StatelessWidget {
                 if (title case final title?) ...[
                   Text(
                     title.toUpperCase(),
-                    style: theme.textTheme.titleSmall?.copyWith(
+                    style: (titleStyle ?? theme.textTheme.titleSmall)?.copyWith(
                       color: titleColor, fontWeight: FontWeight.bold
                     ),
                   ),

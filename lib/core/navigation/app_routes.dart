@@ -8,6 +8,7 @@ import '../../features/customers/presentation/pages/customers_page.dart';
 import '../../features/dashboard/dashboard_page.dart';
 import '../../features/orders/presentation/pages/new_order_page.dart';
 import '../../features/orders/presentation/pages/orders_page.dart';
+import '../../features/orders/presentation/pages/review_order_page.dart';
 import '../../features/products/presentation/pages/products_page.dart';
 
 part 'app_routes.g.dart';
@@ -24,7 +25,12 @@ final rootNavigatorKey = GlobalKey<NavigatorState>();
             TypedGoRoute<CustomerDetailsRoute>(
               path: ':customerId',
               routes: <TypedRoute<RouteData>>[
-                TypedGoRoute<NewOrderRoute>(path: 'new-order'),
+                TypedGoRoute<NewOrderRoute>(
+                  path: 'new-order',
+                  routes: <TypedRoute<RouteData>>[
+                    TypedGoRoute<ReviewOrderRoute>(path: 'review'),
+                  ],
+                ),
               ],
             ),
           ],
@@ -100,7 +106,20 @@ final class NewOrderRoute extends GoRouteData with $NewOrderRoute {
 
   @override
   Widget build(BuildContext context, GoRouterState state) =>
-      NewOrderPage(customerName: $extra.name);
+      NewOrderPage(customer: $extra);
+}
+
+final class ReviewOrderRoute extends GoRouteData with $ReviewOrderRoute {
+  const ReviewOrderRoute({required this.customerId, required this.$extra});
+
+  final String customerId;
+  final Customer $extra;
+
+  static final GlobalKey<NavigatorState> $parentNavigatorKey = rootNavigatorKey;
+
+  @override
+  Widget build(BuildContext context, GoRouterState state) =>
+      ReviewOrderPage(customerName: $extra.name);
 }
 
 final class ProductsRoute extends GoRouteData with $ProductsRoute {
