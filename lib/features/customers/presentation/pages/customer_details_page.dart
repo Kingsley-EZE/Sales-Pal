@@ -57,7 +57,7 @@ class CustomerDetailsPage extends StatelessWidget {
           icon: Assets.icons.icPlus.path,
           onPressed: () {
             context.read<OrderDraftCubit>().startFor(customer);
-            const NewOrderRoute().push(context);
+            const ProductsRoute().go(context);
           },
         ),
       ],

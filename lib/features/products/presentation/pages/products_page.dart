@@ -4,7 +4,10 @@ import 'package:sales_pal/core/navigation/app_routes.dart';
 import 'package:sales_pal/design/components/app_action_footer.dart';
 import 'package:sales_pal/design/components/app_status_view.dart';
 import 'package:sales_pal/design/components/search_field.dart';
+import 'package:sales_pal/design/sizes.dart';
 import 'package:sales_pal/design/spacing.dart';
+import 'package:sales_pal/design/typography.dart';
+import 'package:sales_pal/features/customers/domain/entities/customer.dart';
 import 'package:sales_pal/features/orders/presentation/cubit/order_draft_cubit.dart';
 import 'package:sales_pal/features/products/domain/entities/product.dart';
 import 'package:sales_pal/features/products/presentation/cubit/products_cubit.dart';
@@ -78,6 +81,10 @@ class _ViewCartBar extends StatelessWidget {
   Widget build(BuildContext context) {
     return BlocBuilder<OrderDraftCubit, OrderDraft>(
       builder: (context, draft) => AppActionFooter(
+        leading: switch (draft.customer) {
+          final customer? => _OrderingFor(customer: customer),
+          null => null,
+        },
         primary: AppAction(
           label: draft.isEmpty
               ? 'View Cart'
@@ -90,5 +97,75 @@ class _ViewCartBar extends StatelessWidget {
         ),
       ),
     );
+  }
+}
+
+
+class _OrderingFor extends StatelessWidget {
+  const _OrderingFor({required this.customer});
+
+  final Customer customer;
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+
+    return Row(
+      spacing: AppSpacing.sm,
+      children: [
+        Expanded(
+          child: Text(
+            'Ordering for ${customer.name}',
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
+            style: theme.textTheme.bodyMedium?.copyWith(
+              color: theme.colorScheme.onSurfaceVariant,
+            ),
+          ),
+        ),
+        TextButton(
+          onPressed: () => _cancel(context),
+          style: TextButton.styleFrom(
+            padding: const EdgeInsets.symmetric(horizontal: AppSpacing.sm),
+            minimumSize: const Size(0, AppSize.compactTapTarget),
+            tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+            textStyle: AppTypography.buttonLabelSmall,
+          ),
+          child: const Text('Cancel'),
+        ),
+      ],
+    );
+  }
+
+  Future<void> _cancel(BuildContext context) async {
+    final draft = context.read<OrderDraftCubit>();
+
+    if (!draft.state.isEmpty && !await _confirmedDiscard(context)) return;
+
+    draft.clear();
+  }
+
+  Future<bool> _confirmedDiscard(BuildContext context) async {
+    final discard = await showDialog<bool>(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('Discard this order?'),
+        content: Text(
+          'The items you added for ${customer.name} will be removed.',
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context, false),
+            child: const Text('Keep'),
+          ),
+          TextButton(
+            onPressed: () => Navigator.pop(context, true),
+            child: const Text('Discard'),
+          ),
+        ],
+      ),
+    );
+
+    return discard ?? false;
   }
 }
