@@ -14,12 +14,14 @@ class OrderQueueCard extends StatelessWidget {
     super.key,
     required this.order,
     this.isExpanded = false,
+    this.isRetrying = false,
     this.onToggle,
     this.onRetry,
   });
 
   final Order order;
   final bool isExpanded;
+  final bool isRetrying;
   final VoidCallback? onToggle;
   final VoidCallback? onRetry;
 
@@ -97,14 +99,43 @@ class OrderQueueCard extends StatelessWidget {
           ),
           if (isExpanded) ...[
             const SizedBox(height: AppSpacing.md),
-            SizedBox(
-              width: double.infinity,
-              child: AppButton(
-                label: 'Retry Now',
-                icon: Assets.icons.icRefresh.path,
-                onPressed: onRetry,
+            const Divider(),
+            const SizedBox(height: AppSpacing.md),
+            for (final line in order.lines)
+              Padding(
+                padding: const EdgeInsets.only(bottom: AppSpacing.xs),
+                child: Row(
+                  spacing: AppSpacing.sm,
+                  children: [
+                    Expanded(
+                      child: Text(
+                        '${line.quantity}x ${line.productName}',
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                        style: textTheme.bodyMedium?.copyWith(
+                          color: colorScheme.onSurfaceVariant,
+                        ),
+                      ),
+                    ),
+                    Text(
+                      AppFormat.currency(line.total),
+                      style: textTheme.bodyMedium,
+                    ),
+                  ],
+                ),
               ),
-            ),
+
+            if (order.isPending) ...[
+              const SizedBox(height: AppSpacing.sm),
+              SizedBox(
+                width: double.infinity,
+                child: AppButton(
+                  label: isRetrying ? 'Retrying…' : 'Retry Now',
+                  icon: isRetrying ? null : Assets.icons.icRefresh.path,
+                  onPressed: isRetrying ? null : onRetry,
+                ),
+              ),
+            ],
           ],
         ],
       ),

@@ -5,6 +5,7 @@ import 'package:sales_pal/features/products/presentation/pages/products_page.dar
 import 'package:sales_pal/main.dart';
 
 import '../../support/dependencies.dart';
+import '../../support/pumping.dart';
 
 void main() {
   useTestDependencies();
@@ -26,7 +27,7 @@ void main() {
       expect(find.byType(ProductsPage), findsOneWidget);
 
       await tester.tap(find.text('Orders Queue'));
-      await tester.pumpAndSettle();
+      await settleThroughDatabase(tester);
       expect(find.byType(OrdersPage), findsOneWidget);
     });
   });
