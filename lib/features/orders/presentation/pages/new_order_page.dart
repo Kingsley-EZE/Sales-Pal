@@ -7,7 +7,6 @@ import 'package:sales_pal/design/components/app_status_view.dart';
 import 'package:sales_pal/design/components/app_top_bar.dart';
 import 'package:sales_pal/design/sizes.dart';
 import 'package:sales_pal/design/spacing.dart';
-import 'package:sales_pal/features/orders/domain/entities/order_line_item.dart';
 import 'package:sales_pal/features/orders/presentation/cubit/order_draft_cubit.dart';
 import 'package:sales_pal/features/orders/presentation/widgets/order_line_item_card.dart';
 
@@ -48,7 +47,7 @@ class NewOrderPage extends StatelessWidget {
                             'Nothing on this order yet.\n'
                             'Add products from the Products tab.',
                       )
-                    : _LineItemList(lines: draft.lines),
+                    : _LineItemList(entries: draft.entries),
               ),
               _SubtotalFooter(draft: draft),
             ],
@@ -60,9 +59,9 @@ class NewOrderPage extends StatelessWidget {
 }
 
 class _LineItemList extends StatelessWidget {
-  const _LineItemList({required this.lines});
+  const _LineItemList({required this.entries});
 
-  final List<OrderLineItem> lines;
+  final List<DraftEntry> entries;
 
   @override
   Widget build(BuildContext context) {
@@ -75,15 +74,18 @@ class _LineItemList extends StatelessWidget {
         AppSpacing.md,
         AppSpacing.md,
       ),
-      itemCount: lines.length,
+      itemCount: entries.length,
       itemBuilder: (context, index) {
-        final line = lines[index];
+        final entry = entries[index];
+        final productId = entry.product.id;
 
         return OrderLineItemCard(
-          lineItem: line,
-          onRemove: () => draft.removeProduct(line.productId),
-          onDecrement: () => draft.decrement(line.productId),
-          onIncrement: () => draft.increment(line.productId),
+          lineItem: entry.lineItem,
+          availableUnits: entry.available,
+          canIncrement: !entry.isAtStockLimit,
+          onRemove: () => draft.removeProduct(productId),
+          onDecrement: () => draft.decrement(productId),
+          onIncrement: () => draft.increment(productId),
         );
       },
       separatorBuilder: (_, _) => const SizedBox(height: AppSpacing.md),

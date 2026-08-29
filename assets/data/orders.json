@@ -9,19 +9,19 @@
       {
         "productId": "PRD-001",
         "productName": "Organic Premium Roast Coffee (1kg)",
-        "unitPrice": 24.50,
+        "unitPrice": 245.00,
         "quantity": 4
       },
       {
         "productId": "PRD-005",
         "productName": "Basmati Rice (5kg)",
-        "unitPrice": 32.00,
+        "unitPrice": 275.00,
         "quantity": 6
       },
       {
         "productId": "PRD-006",
         "productName": "Dark Chocolate Bars (Case of 24)",
-        "unitPrice": 41.75,
+        "unitPrice": 298.25,
         "quantity": 2
       }
     ]
@@ -36,13 +36,13 @@
       {
         "productId": "PRD-002",
         "productName": "Extra Virgin Olive Oil (750ml)",
-        "unitPrice": 18.90,
+        "unitPrice": 189.50,
         "quantity": 10
       },
       {
         "productId": "PRD-003",
         "productName": "Whole Grain Wheat Crackers (200g)",
-        "unitPrice": 4.25,
+        "unitPrice": 112.75,
         "quantity": 24
       }
     ]
@@ -57,13 +57,13 @@
       {
         "productId": "PRD-004",
         "productName": "Unsweetened Almond Milk (1L)",
-        "unitPrice": 5.10,
+        "unitPrice": 128.40,
         "quantity": 12
       },
       {
         "productId": "PRD-007",
         "productName": "Sparkling Water (12 x 500ml)",
-        "unitPrice": 9.60,
+        "unitPrice": 156.80,
         "quantity": 8
       }
     ]
@@ -78,13 +78,13 @@
       {
         "productId": "PRD-005",
         "productName": "Basmati Rice (5kg)",
-        "unitPrice": 32.00,
+        "unitPrice": 275.00,
         "quantity": 10
       },
       {
         "productId": "PRD-008",
         "productName": "Cold Pressed Orange Juice (1L)",
-        "unitPrice": 7.35,
+        "unitPrice": 134.90,
         "quantity": 6
       }
     ]
@@ -99,19 +99,19 @@
       {
         "productId": "PRD-001",
         "productName": "Organic Premium Roast Coffee (1kg)",
-        "unitPrice": 24.50,
+        "unitPrice": 245.00,
         "quantity": 8
       },
       {
         "productId": "PRD-002",
         "productName": "Extra Virgin Olive Oil (750ml)",
-        "unitPrice": 18.90,
+        "unitPrice": 189.50,
         "quantity": 4
       },
       {
         "productId": "PRD-006",
         "productName": "Dark Chocolate Bars (Case of 24)",
-        "unitPrice": 41.75,
+        "unitPrice": 298.25,
         "quantity": 3
       }
     ]

@@ -33,6 +33,22 @@ const _oil = Product(
   price: 18.90,
 );
 
+const _lastTwo = Product(
+  id: 'PRD-009',
+  name: 'Single Origin Cocoa (250g)',
+  imagePath: 'assets/images/img_product_sample.png',
+  stockUnits: 2,
+  price: 11.00,
+);
+
+const _soldOut = Product(
+  id: 'PRD-010',
+  name: 'Dark Chocolate Bars (Case of 24)',
+  imagePath: 'assets/images/img_product_sample.png',
+  stockUnits: 0,
+  price: 41.75,
+);
+
 void main() {
   late OrderDraftCubit cubit;
 
@@ -84,6 +100,43 @@ void main() {
 
       cubit.decrement(_coffee.id);
       expect(cubit.state.lines.first.quantity, 2);
+    });
+
+    test('increment stops at the available stock', () {
+      cubit
+        ..addProduct(_lastTwo)
+        ..increment(_lastTwo.id)
+        ..increment(_lastTwo.id)
+        ..increment(_lastTwo.id);
+
+      expect(cubit.state.entries.single.quantity, 2);
+      expect(cubit.state.entries.single.isAtStockLimit, isTrue);
+    });
+
+    test('a product with no stock cannot be added', () {
+      cubit.addProduct(_soldOut);
+
+      expect(cubit.state.isEmpty, isTrue);
+      expect(cubit.state.contains(_soldOut.id), isFalse);
+    });
+
+    test('toggling a sold-out product does nothing', () {
+      cubit.toggleProduct(_soldOut);
+
+      expect(cubit.state.isEmpty, isTrue);
+    });
+
+    test('the cap is per line, not across the order', () {
+      cubit
+        ..addProduct(_lastTwo)
+        ..addProduct(_coffee)
+        ..increment(_lastTwo.id)
+        ..increment(_lastTwo.id)
+        ..increment(_coffee.id);
+
+      expect(cubit.state.entries.first.quantity, 2);
+      expect(cubit.state.entries.last.quantity, 2);
+      expect(cubit.state.entries.last.isAtStockLimit, isFalse);
     });
 
     test('decrement floors at one instead of emptying the line', () {
