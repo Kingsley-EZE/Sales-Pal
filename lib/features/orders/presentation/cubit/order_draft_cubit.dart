@@ -31,18 +31,23 @@ class OrderDraftCubit extends Cubit<OrderDraft> {
       : addProduct(product);
 
   void addProduct(Product product) {
-    if (state.contains(product.id)) return;
+    if (!product.isInStock || state.contains(product.id)) return;
 
     emit(
       state.copyWith(
-        lines: [...state.lines, OrderLineItem.fromProduct(product)],
+        entries: [
+          ...state.entries,
+          DraftEntry(product: product, quantity: 1),
+        ],
       ),
     );
   }
 
   void removeProduct(String productId) => emit(
     state.copyWith(
-      lines: state.lines.where((line) => line.productId != productId).toList(),
+      entries: state.entries
+          .where((entry) => entry.product.id != productId)
+          .toList(),
     ),
   );
 
@@ -58,12 +63,14 @@ class OrderDraftCubit extends Cubit<OrderDraft> {
 
   void _changeQuantity(String productId, int delta) => emit(
     state.copyWith(
-      lines: [
-        for (final line in state.lines)
-          if (line.productId == productId)
-            line.copyWith(quantity: max(1, line.quantity + delta))
+      entries: [
+        for (final entry in state.entries)
+          if (entry.product.id == productId)
+            entry.withQuantity(
+              max(1, min(entry.available, entry.quantity + delta)),
+            )
           else
-            line,
+            entry,
       ],
     ),
   );

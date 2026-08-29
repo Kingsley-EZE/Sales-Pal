@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:sales_pal/core/format/app_format.dart';
 import 'package:sales_pal/design/components/app_card.dart';
+import 'package:sales_pal/design/semantic_colors.dart';
 import 'package:sales_pal/design/sizes.dart';
 import 'package:sales_pal/design/spacing.dart';
 import 'package:sales_pal/features/orders/domain/entities/order_line_item.dart';
@@ -11,12 +12,17 @@ class OrderLineItemCard extends StatelessWidget {
   const OrderLineItemCard({
     super.key,
     required this.lineItem,
+    this.availableUnits,
+    this.canIncrement = true,
     this.onRemove,
     this.onDecrement,
     this.onIncrement,
   });
 
   final OrderLineItem lineItem;
+  final int? availableUnits;
+
+  final bool canIncrement;
   final VoidCallback? onRemove;
   final VoidCallback? onDecrement;
   final VoidCallback? onIncrement;
@@ -85,13 +91,24 @@ class OrderLineItemCard extends StatelessWidget {
                       overflow: TextOverflow.ellipsis,
                       style: textTheme.titleSmall,
                     ),
+                    if (availableUnits case final units? when !canIncrement)
+                      Text(
+                        'All $units in stock',
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                        style: textTheme.bodySmall?.copyWith(
+                          color: AppSemanticColors.of(
+                            context,
+                          ).onWarningContainer,
+                        ),
+                      ),
                   ],
                 ),
               ),
               QuantityStepper(
                 quantity: lineItem.quantity,
                 onDecrement: lineItem.quantity > 1 ? onDecrement : null,
-                onIncrement: onIncrement,
+                onIncrement: canIncrement ? onIncrement : null,
               ),
             ],
           ),

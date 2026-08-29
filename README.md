@@ -1,6 +1,6 @@
 # Sales Pal
 
-A field-sales app: browse customers and products, build an order, submit it,
+A field-sales app. Browse customers and products, build an order, submit it,
 and keep it locally as Pending when submission fails.
 
 ## Running it

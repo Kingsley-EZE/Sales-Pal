@@ -52,11 +52,15 @@ class ProductListItem extends StatelessWidget {
                 ),
                 const SizedBox(height: AppSpacing.xs),
                 Text(
-                  'Stock: ${product.stockUnits} units',
+                  product.isInStock
+                      ? 'Stock: ${product.stockUnits} units'
+                      : 'Out of stock',
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
                   style: textTheme.bodySmall?.copyWith(
-                    color: colorScheme.onSurfaceVariant,
+                    color: product.isInStock
+                        ? colorScheme.onSurfaceVariant
+                        : colorScheme.error,
                   ),
                 ),
                 const SizedBox(height: AppSpacing.sm),
@@ -73,7 +77,10 @@ class ProductListItem extends StatelessWidget {
                         ),
                       ),
                     ),
-                    AddProductButton(onPressed: onAdd, isAdded: isAdded),
+                    AddProductButton(
+                      onPressed: product.isInStock ? onAdd : null,
+                      isAdded: isAdded,
+                    ),
                   ],
                 ),
               ],
